@@ -1,0 +1,18 @@
+This is a simple script that I wrote in order to display update info in my
+conky.
+
+Simply run it on a cron job, then cat in the outputted file in your conky
+(${execi <interval> cat ~/.conky/ubuntu_updates_avail.info})
+
+Its currently not designed to be configurable via command line options, so
+you'll have to go in and edit the file if you want it to act differently.
+The only thing most people will want to change is the output, which should
+be easy to do even if you don't know python - just change the string named
+`output`.)
+
+Note that it requires root privileges to call apt-get update.
+
+See the in file documentation for more info (including licensing.)
+
+Matthew Todd
+Jan 15, 2010
