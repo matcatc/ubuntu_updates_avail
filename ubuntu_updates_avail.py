@@ -37,7 +37,7 @@ import subprocess
 import sys
 import re
 
-out_file = 'ubuntu_updates_avail.info'
+out_file = sys.argv[1]          #example: 'ubuntu_updates_avail.info'
 
 try:
     # call apt-get update
