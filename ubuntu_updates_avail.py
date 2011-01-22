@@ -45,8 +45,22 @@ from optparse import OptionParser
 import os
 import time
 
+DEFAULT_OUTPUT_TEMPLATE = '''\
+ as of {time}:
+ upgrade            {upgrade}
+ install            {install}
+ remove             {remove}
+ not upgraded       {not_upgraded}'''
+ 
+
 FAILED_MSG = ' update check failed'
 def write_failed_msg(filename):
+    '''
+    edit this function if you want the file to display something different when
+    the update check failed or if you don't want to change the file
+    @date Jan 17, 2011
+    @author Matthew Todd
+    '''
     with open(filename, 'w') as f:
         f.write(FAILED_MSG)
 
@@ -64,6 +78,14 @@ def program_options():
         license, please see 'COPYING' or GNU's online copy.
         ''')
     
+    template_help = textwrap.dedent('''\
+                    Template/format for output file. Option specifies a file,
+                    which contains the template. The template is a python
+                    string that will have format() called on it. You can use
+                    the following identifiers/placeholders: {upgrade},
+                    {install}, {remove}, {not_upgraded}, {time} along with the
+                    normal formatting syntax.''')
+
     parser = OptionParser(usage)
     parser.add_option("--version", dest="version",
                         action="store_true", default=False,
@@ -85,6 +107,10 @@ def program_options():
                         action="store", default="debug",
                         help="""The log level""")
 
+    parser.add_option("--template", dest="template_file",
+                        action="store", default=None,
+                        help=template_help)
+
     (options, args) = parser.parse_args()
 
     if options.version:
@@ -98,6 +124,11 @@ def program_options():
 
 options, args = program_options()
 out_file = os.path.abspath(os.path.join(options.base_dir, args[0]))
+if options.template_file:
+    with open(options.template_file, 'r') as f:
+        out_template = f.read()
+else:
+    out_template = DEFAULT_OUTPUT_TEMPLATE
 
 def setupLogging(directory, filename, level):
     '''
@@ -183,14 +214,18 @@ try:
         write_failed_msg(out_file)
         sys.exit(retcode)
 
-    output = '''\
-     upgrade         %s
-     install         %s
-     remove          %s
-     not upgraded    %s''' % (match_obj.group(1),
-                            match_obj.group(2),
-                            match_obj.group(3),
-                            match_obj.group(4))
+    template_dict = { 'upgrade' : match_obj.group(1),
+                        'install' : match_obj.group(2),
+                        'remove' : match_obj.group(3),
+                        'not_upgraded' : match_obj.group(4),
+                        'time' : time.asctime(),}
+
+    try:
+        output = out_template.format(**template_dict)
+    except KeyError as e:
+        write_failed_msg(out_file)
+        log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
+        sys.exit(2)
 
     # write out to conky
     with open(out_file, 'w') as f:
