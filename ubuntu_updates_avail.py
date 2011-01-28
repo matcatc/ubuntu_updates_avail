@@ -53,7 +53,9 @@ DEFAULT_OUTPUT_TEMPLATE = '''\
  not upgraded       {not_upgraded}'''
  
 FAILED_MSG = ' update check failed'             # generic failure msg
+NO_NETWORK_MSG = ' no network available'
 
+DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 
 def program_options():
     '''
@@ -214,9 +216,41 @@ def write_msg(filename, msg, is_error):
         with open(filename, 'w') as f:
             f.write(msg)
 
+def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
+    '''
+    Determine whether the network (internet) is available.
+
+    - checks routing table for default route
+    - checks if the ubuntu servers are reachable
+
+    @note Hasn't been tested extensively due to the fact that its hard to
+    similate most condtions.
+
+    @param server_address the ubuntu server to check. Defaults to the main us server.
+    @return True if the network is unavailable
+    @date Jan 27, 2010
+    @author Matthew Todd
+    '''
+    try:
+        # check for default route in routing table
+        output = subprocess.getoutput('/sbin/route -n | grep -c "^0\.0\.0\.0"')
+        if int(output) == 0:
+            log.info("no default route in table")
+            return True
+
+        # ping ubuntu servers
+        subprocess.check_output(['ping', '-q', '-c', '3', server_address])
+    except (subprocess.CalledProcessError) as e:
+        log.info("no network connection: %s" % e)
+        return True
+
+    return False
+
 try:
-    #TODO: check for network availability
-    #print special output if network is unavailable
+    if network_unavailable():
+        log.error("network unavailable")
+        write_msg(out_file, NO_NETWORK_MSG, is_error=True)
+        sys.exit(3)
 
     # call apt-get update
     try:
