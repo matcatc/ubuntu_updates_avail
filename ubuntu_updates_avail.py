@@ -146,6 +146,20 @@ def setupLogging(directory, filename, level):
     @date Nov 10, 2010
     @author Matthew Todd
     '''
+    class InvalidLogLevelError(Exception):
+        '''
+        Invalid log level.
+        '''
+        def __init__(self, lvl):
+            super().__init__()
+            self.log_level = lvl
+
+        def __str__(self):
+            return "Invalid Log Level: %s" % self.log_level
+
+        def __repr__(self):
+            return str(self)
+
     log_file = os.path.abspath(os.path.join(directory, filename))
 
     level = level.upper()
@@ -162,7 +176,6 @@ def setupLogging(directory, filename, level):
     elif level == 'DEFAULT':
         log_level = DEFAULT_LOG_LEVEL
     else:
-        #NEXT: more specific exception type
         raise InvalidLogLevelError(level)
 
     root_logger = logging.getLogger()
