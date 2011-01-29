@@ -76,8 +76,15 @@ def program_options():
                     which contains the template. The template is a python
                     string that will have format() called on it. You can use
                     the following identifiers/placeholders: {upgrade},
-                    {install}, {remove}, {not_upgraded}, {time} along with the
-                    normal formatting syntax.''')
+                    {install}, {remove}, {not_upgraded}, {time}, {upgradeable} along with the
+                    normal formatting syntax.
+                    
+                    upgrade, install, remove, not_upgraded are strait from apt-get upgrade output.
+                    
+                    time is the current time (full asctime)
+                    
+                    upgradeable is the sum of upgrade and not_upgraded. This is likely what you'll
+                    want to use most of the time.''')
 
     parser = OptionParser(usage)
     parser.add_option("--version", dest="version",
@@ -279,11 +286,15 @@ try:
         write_msg(out_file, FAILED_MSG, is_error=True)
         sys.exit(retcode)
 
-    template_dict = { 'upgrade' : match_obj.group(1),
+    upgrade = match_obj.group(1)
+    not_upgraded = match_obj.group(4)
+    upgradeable = str(int(upgrade) + int(not_upgraded))
+    template_dict = { 'upgrade' : upgrade,
                         'install' : match_obj.group(2),
                         'remove' : match_obj.group(3),
-                        'not_upgraded' : match_obj.group(4),
-                        'time' : time.asctime(),}
+                        'not_upgraded' : not_upgraded,
+                        'time' : time.asctime(),
+                        'upgradeable' : upgradeable,}
 
     try:
         output = out_template.format(**template_dict)
