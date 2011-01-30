@@ -52,17 +52,8 @@ DEFAULT_OUTPUT_TEMPLATE = '''\
  remove             {remove}
  not upgraded       {not_upgraded}'''
  
+FAILED_MSG = ' update check failed'             # generic failure msg
 
-FAILED_MSG = ' update check failed'
-def write_failed_msg(filename):
-    '''
-    edit this function if you want the file to display something different when
-    the update check failed or if you don't want to change the file
-    @date Jan 17, 2011
-    @author Matthew Todd
-    '''
-    with open(filename, 'w') as f:
-        f.write(FAILED_MSG)
 
 def program_options():
     '''
@@ -110,6 +101,11 @@ def program_options():
     parser.add_option("--template", dest="template_file",
                         action="store", default=None,
                         help=template_help)
+
+    parser.add_option("--no_error_output", dest="no_error_output",
+                        action="store_true", default=False,
+                        help='''Do not update output file with errors. If
+                            update was unsucessful, leave old file untouched.''')
 
     (options, args) = parser.parse_args()
 
@@ -197,6 +193,27 @@ log = logging.getLogger(__name__)
 
 log.info("out_file = '%s'" % out_file)
 
+def write_msg(filename, msg, is_error):
+    '''
+    This function writes out the given message to the output file.
+
+    This function truncates the output file prior to writing out the new
+    message. So the last call to this function will be overwritten. Thus if you
+    want to write out multiple pieces of data, combine them into one string and
+    then write it out using this function.
+
+    @param filename filename of the output file.
+    @param msg the message to write out to the output file. This is what will
+        be displayed to the user.
+    @param is_error whether the output is an error msg. This allows us to shut
+        off error messages to the output file, should we so desire.
+    @date Jan 17, 2011
+    @author Matthew Todd
+    '''
+    if not (options.no_error_output and is_error):
+        with open(filename, 'w') as f:
+            f.write(msg)
+
 try:
     #TODO: check for network availability
     #print special output if network is unavailable
@@ -206,7 +223,7 @@ try:
         retcode = subprocess.call(["sudo", "apt-get", "update", "-qq"])
     except (subprocess.CalledProcessError, OSError) as e:
         log.error("update failed with: %s" % e)
-        write_failed_msg(out_file)
+        write_msg(out_file, FAILED_MSG, is_error=True)
         sys.exit(retcode)
 
     # call and save upgrade --no-act
@@ -214,8 +231,9 @@ try:
         ret = subprocess.check_output(['apt-get', 'upgrade', '--no-act', '-q'])
         upgrade_output= ret.decode()
     except (subprocess.CalledProcessError, OSError) as e:
+        # most likely: permissions error
         log.error("upgrade --no-act failed with: %s" % e)
-        write_failed_msg(out_file)
+        write_msg(out_file, FAILED_MSG, is_error=True)
         sys.exit(retcode)
 
     # parse returned text
@@ -224,7 +242,7 @@ try:
 
     if match_obj == None:
         log.error('regex failed')
-        write_failed_msg(out_file)
+        write_msg(out_file, FAILED_MSG, is_error=True)
         sys.exit(retcode)
 
     template_dict = { 'upgrade' : match_obj.group(1),
@@ -236,18 +254,18 @@ try:
     try:
         output = out_template.format(**template_dict)
     except KeyError as e:
-        write_failed_msg(out_file)
+        write_msg(out_file, FAILED_MSG, is_error=True)
         log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
         sys.exit(2)
 
     # write out to conky
-    with open(out_file, 'w') as f:
-        f.write(output)
+    write_msg(out_file, output, is_error=False)
+
     log.info('normal exit: %s' % time.asctime())
     sys.exit(0)
 
 except Exception as e:
     log.error("Exception occured: %s" % e)
-    write_failed_msg(out_file)
+    write_msg(out_file, FAILED_MSG, is_error=True)
     sys.exit(1)
 
