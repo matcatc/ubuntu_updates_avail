@@ -1,0 +1,64 @@
+The items in this file aren't in order, but generally items towards the top are more important.
+-----------------------------------------------------------------------------------------------
+
+- remove TODO's from d_update... and d_network
+- fast-forward merge
+
+- finish d_template
+- test d_template
+- sqaush d_template
+- fast-forward merge d_template
+
+- refactoring
+    split the script into functions
+        localization of code
+    add a main() function
+
+
+items to consider:
+no particular order
+-------------------
+
+- option: no update if no internet?
+    make default?
+        then provide a way to override (--force-update or --always-update)
+    what about cases where the user has a local mirror?
+        as long as the proper adddress is specified, our current network checking code should work.
+
+- option: --no-root
+    don't do anything requiring root
+
+- option: --no-update
+    don't update
+    b/c:
+        system may already be
+        reduces runtime
+        script may not be smart enough (e.g: local mirror and no internet, script may terminate early b/c in a normal setup the computer wouldn't be able to update)
+ 
+- no ping output to terminal
+    not high priority b/c only times users will see this is when debugging/ trying out for the first time
+        although first impressions are pretty important
+
+- other time formats
+    current time format is long and annoying
+    perhaps a way for the user to specify
+        command line option
+        in template
+            might require parsing the template and removing stuff
+            perhaps could pass template through time printing function
+
+- KISS
+    is the script becoming too complicated?
+
+- short command line options
+    going to be hard to do well
+
+- option: server address
+    allow user to specify the server to ping in order to verify network connectivity
+
+- better looking --help output
+
+- add docs (docbook) ?
+    the script has certainly gotten large enough that a manpage may be desired
+
+
