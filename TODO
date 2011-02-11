@@ -1,6 +1,10 @@
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
+- run ddd0fc0f5a on system with template
+    if there's no obvious bugs after running for a while, go ahead and merge in master and push to origin.
+        whatever feels like long enough. A week is probably fine.
+
 - refactoring
     split the script into functions
         localization of code
