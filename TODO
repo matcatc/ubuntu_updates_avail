@@ -32,6 +32,7 @@ no particular order
         system may already be
         reduces runtime
         script may not be smart enough (e.g: local mirror and no internet, script may terminate early b/c in a normal setup the computer wouldn't be able to update)
+        may be running regularly to debug, and don't want it updating a lot
  
 - no ping output to terminal
     not high priority b/c only times users will see this is when debugging/ trying out for the first time
