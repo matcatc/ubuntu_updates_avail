@@ -16,6 +16,10 @@ items to consider:
 no particular order
 -------------------
 
+- option: max width of output
+    That way the output won't get too long and mess up conky
+    Should be easy, just use textwrap module
+
 - option: no update if no internet?
     make default?
         then provide a way to override (--force-update or --always-update)
