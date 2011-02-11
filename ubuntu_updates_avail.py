@@ -130,7 +130,8 @@ def program_options():
 options, args = program_options()
 out_file = os.path.abspath(os.path.join(options.base_dir, args[0]))
 if options.template_file:
-    with open(options.template_file, 'r') as f:
+    template_file = os.path.abspath(os.path.join(options.base_dir, options.template_file))
+    with open(template_file, 'r') as f:
         out_template = f.read()
 else:
     out_template = DEFAULT_OUTPUT_TEMPLATE
