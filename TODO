@@ -68,3 +68,7 @@ no particular order
 
 - proper and unique exit codes
     Will want a MACRO dictionary or the like
+ - proper and unique error messages for the different situations
+    Perhaps make the error messages contain the exit codes too
+
+
