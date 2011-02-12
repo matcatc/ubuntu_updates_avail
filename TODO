@@ -65,3 +65,6 @@ no particular order
     or perhaps just update the README?
 
 - change default output to something more sensible.
+
+- proper and unique exit codes
+    Will want a MACRO dictionary or the like
