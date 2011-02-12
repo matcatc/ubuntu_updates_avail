@@ -138,8 +138,6 @@ def compute_out_file(base_dir, filename):
     '''
     return os.path.abspath(os.path.join(options.base_dir, args[0]))
 
-out_file = compute_out_file(options.base_dir, args[0])
-
 def get_template(template_file, base_dir):
     '''
     Gets the template from the file. If no file, then uses default.
@@ -153,8 +151,6 @@ def get_template(template_file, base_dir):
             return f.read()
     else:
         return DEFAULT_OUTPUT_TEMPLATE
-
-out_template = get_template(options.template_file, options.base_dir)
 
 def setupLogging(directory, filename, level):
     '''
@@ -229,8 +225,6 @@ def compute_log_dir(log_dir, base_dir):
 
 setupLogging(compute_log_dir(options.log_dir, options.base_dir), options.log_file, options.log_level)
 log = logging.getLogger(__name__)
-
-log.info("out_file = '%s'" % out_file)
 
 def write_msg(filename, msg, is_error):
     '''
@@ -320,6 +314,9 @@ def main():
     @date Feb 11, 2011
     @author Matthew Todd
     '''
+    out_file = compute_out_file(options.base_dir, args[0])
+    log.info("out_file = '%s'" % out_file)
+
     try:
         if network_unavailable():
             log.error("network unavailable")
@@ -355,6 +352,7 @@ def main():
         template_dict = create_template_dict(match_obj)
 
         try:
+            out_template = get_template(options.template_file, options.base_dir)
             output = out_template.format(**template_dict)
         except KeyError as e:
             write_msg(out_file, FAILED_MSG, is_error=True)
