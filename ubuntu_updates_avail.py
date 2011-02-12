@@ -32,7 +32,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-@date Jan 15, 2010
+@date Jan 15, 2011
 @author Matthew Todd
 '''
 
@@ -61,7 +61,7 @@ def program_options():
     '''
     handles program options
 
-    @date Jan 16, 2010
+    @date Jan 16, 2011
     @author Matthew Todd
     '''
     usage = "usage: %prog [options] <output_file>"
@@ -128,13 +128,33 @@ def program_options():
     return (options, args)
 
 options, args = program_options()
-out_file = os.path.abspath(os.path.join(options.base_dir, args[0]))
-if options.template_file:
-    template_file = os.path.abspath(os.path.join(options.base_dir, options.template_file))
-    with open(template_file, 'r') as f:
-        out_template = f.read()
-else:
-    out_template = DEFAULT_OUTPUT_TEMPLATE
+
+def compute_out_file(base_dir, filename):
+    '''
+    Computes the file out_file path/filename.
+
+    @date Feb 11, 2011
+    @author Matthew Todd
+    '''
+    return os.path.abspath(os.path.join(options.base_dir, args[0]))
+
+out_file = compute_out_file(options.base_dir, args[0])
+
+def get_template(template_file, base_dir):
+    '''
+    Gets the template from the file. If no file, then uses default.
+
+    @date Feb 11, 2011
+    @author Matthew Todd
+    '''
+    if options.template_file:
+        template_file = os.path.abspath(os.path.join(options.base_dir, options.template_file))
+        with open(template_file, 'r') as f:
+            return f.read()
+    else:
+        return DEFAULT_OUTPUT_TEMPLATE
+
+out_template = get_template(options.template_file, options.base_dir)
 
 def setupLogging(directory, filename, level):
     '''
@@ -193,12 +213,21 @@ def setupLogging(directory, filename, level):
 
     root_logger.info("Logger created: %s" % time.asctime())
 
-if options.log_dir != None:
-    log_dir = options.log_dir
-else:
-    log_dir = options.base_dir
+def compute_log_dir(log_dir, base_dir):
+    '''
+    Computes the directory where the log file(s) are to be stored.
 
-setupLogging(log_dir, options.log_file, options.log_level)
+    Chooses between log_dir and base_dir. If log_dir isn't None, then its log_dir.
+
+    @date Feb 11, 2011
+    @author Matthew Todd
+    '''
+    if options.log_dir != None:
+        return options.log_dir
+    else:
+        return options.base_dir
+
+setupLogging(compute_log_dir(options.log_dir, options.base_dir), options.log_file, options.log_level)
 log = logging.getLogger(__name__)
 
 log.info("out_file = '%s'" % out_file)
@@ -236,7 +265,7 @@ def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
 
     @param server_address the ubuntu server to check. Defaults to the main us server.
     @return True if the network is unavailable
-    @date Jan 27, 2010
+    @date Jan 27, 2011
     @author Matthew Todd
     '''
     try:
@@ -254,64 +283,95 @@ def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
 
     return False
 
-try:
-    if network_unavailable():
-        log.error("network unavailable")
-        write_msg(out_file, NO_NETWORK_MSG, is_error=True)
-        sys.exit(3)
+def create_template_dict(match_obj):
+    '''
+    Create the template dict to be used to substitute in real values.
 
-    # call apt-get update
-    try:
-        retcode = subprocess.call(["sudo", "apt-get", "update", "-qq"])
-    except (subprocess.CalledProcessError, OSError) as e:
-        log.error("update failed with: %s" % e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
-        sys.exit(retcode)
-
-    # call and save upgrade --no-act
-    try:
-        ret = subprocess.check_output(['apt-get', 'upgrade', '--no-act', '-q'])
-        upgrade_output= ret.decode()
-    except (subprocess.CalledProcessError, OSError) as e:
-        # most likely: permissions error
-        log.error("upgrade --no-act failed with: %s" % e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
-        sys.exit(retcode)
-
-    # parse returned text
-    regex = re.compile('([0-9]+) upgraded, ([0-9]+) newly installed, ([0-9]+) to remove and ([0-9]+) not upgraded.')
-    match_obj = regex.search(upgrade_output)
-
-    if match_obj == None:
-        log.error('regex failed')
-        write_msg(out_file, FAILED_MSG, is_error=True)
-        sys.exit(retcode)
-
+    @param match_obj the regex match object from "sudo apt-get upgrade ...". Contains the data to use
+        to fill the dict.
+    @date Feb 11, 2011
+    @author Matthew Todd
+    '''
     upgrade = match_obj.group(1)
+    install = match_obj.group(2)
+    remove = match_obj.group(3)
     not_upgraded = match_obj.group(4)
+    cur_time = time.asctime()
     upgradable = str(int(upgrade) + int(not_upgraded))
-    template_dict = { 'upgrade' : upgrade,
-                        'install' : match_obj.group(2),
-                        'remove' : match_obj.group(3),
-                        'not_upgraded' : not_upgraded,
-                        'time' : time.asctime(),
-                        'upgradable' : upgradable,}
 
+    return { 'upgrade'      : upgrade,
+            'install'       : install,
+            'remove'        : remove,
+            'not_upgraded'  : not_upgraded,
+            'time'          : cur_time,
+            'upgradable'    : upgradable,}
+
+
+
+###
+#### main
+###
+def main():
+    '''
+    Main function.
+
+    returns the exit code.
+
+    @date Feb 11, 2011
+    @author Matthew Todd
+    '''
     try:
-        output = out_template.format(**template_dict)
-    except KeyError as e:
+        if network_unavailable():
+            log.error("network unavailable")
+            write_msg(out_file, NO_NETWORK_MSG, is_error=True)
+            return 3
+
+        # call apt-get update
+        try:
+            retcode = subprocess.call(["sudo", "apt-get", "update", "-qq"])
+        except (subprocess.CalledProcessError, OSError) as e:
+            log.error("update failed with: %s" % e)
+            write_msg(out_file, FAILED_MSG, is_error=True)
+            return retcode
+
+        # call and save upgrade --no-act
+        try:
+            ret = subprocess.check_output(['apt-get', 'upgrade', '--no-act', '-q'])
+            upgrade_output= ret.decode()
+        except (subprocess.CalledProcessError, OSError) as e:
+            log.error("upgrade --no-act failed with: %s" % e)
+            write_msg(out_file, FAILED_MSG, is_error=True)
+            return retcode
+
+        # parse returned text
+        regex = re.compile('([0-9]+) upgraded, ([0-9]+) newly installed, ([0-9]+) to remove and ([0-9]+) not upgraded.')
+        match_obj = regex.search(upgrade_output)
+
+        if match_obj == None:
+            log.error('regex failed')
+            write_msg(out_file, FAILED_MSG, is_error=True)
+            return retcode
+
+        template_dict = create_template_dict(match_obj)
+
+        try:
+            output = out_template.format(**template_dict)
+        except KeyError as e:
+            write_msg(out_file, FAILED_MSG, is_error=True)
+            log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
+            return 2
+
+        # write out to conky
+        write_msg(out_file, output, is_error=False)
+
+        log.info('normal exit: %s' % time.asctime())
+        return 0
+
+    except Exception as e:
+        log.error("Exception occured: %s" % e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
-        sys.exit(2)
+        return 1
 
-    # write out to conky
-    write_msg(out_file, output, is_error=False)
 
-    log.info('normal exit: %s' % time.asctime())
-    sys.exit(0)
-
-except Exception as e:
-    log.error("Exception occured: %s" % e)
-    write_msg(out_file, FAILED_MSG, is_error=True)
-    sys.exit(1)
-
+if __name__ == "__main__":
+    sys.exit(main())
