@@ -45,6 +45,11 @@ from optparse import OptionParser
 import os
 import time
 
+
+###
+#### macros
+###
+
 DEFAULT_OUTPUT_TEMPLATE = '''\
  as of {time}:
  upgrade            {upgrade}
@@ -57,6 +62,10 @@ NO_NETWORK_MSG = ' no network available'
 
 DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 
+
+###
+#### program options
+###
 def program_options():
     '''
     handles program options
@@ -127,8 +136,6 @@ def program_options():
 
     return (options, args)
 
-options, args = program_options()
-
 def compute_out_file(base_dir, filename):
     '''
     Computes the file out_file path/filename.
@@ -152,6 +159,13 @@ def get_template(template_file, base_dir):
     else:
         return DEFAULT_OUTPUT_TEMPLATE
 
+# we do this here so that we have what we need to setup logging.
+options, args = program_options()
+
+
+###
+#### logging
+###
 def setupLogging(directory, filename, level):
     '''
     Create and setup our root logger.
@@ -223,9 +237,15 @@ def compute_log_dir(log_dir, base_dir):
     else:
         return options.base_dir
 
+# we do this here b/c it makes sense for the logger to be available to all funcs,
+#  without having to pass it to each one
 setupLogging(compute_log_dir(options.log_dir, options.base_dir), options.log_file, options.log_level)
 log = logging.getLogger(__name__)
 
+
+###
+#### helper functions
+###
 def write_msg(filename, msg, is_error):
     '''
     This function writes out the given message to the output file.
@@ -300,8 +320,6 @@ def create_template_dict(match_obj):
             'time'          : cur_time,
             'upgradable'    : upgradable,}
 
-
-
 ###
 #### main
 ###
@@ -369,7 +387,6 @@ def main():
         log.error("Exception occured: %s" % e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
