@@ -63,6 +63,68 @@ NO_NETWORK_MSG = ' no network available'
 DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 
 
+
+###
+#### exceptions
+###
+class NoNetworkError(Exception):
+    '''
+    Error when there is no network connection.
+
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    def __init__(self, error):
+        '''
+        @param error the error indicating the network is unavailable
+        '''
+        self.error = error
+
+    def __str__(self):
+        return "No network available: %s" % self.error
+
+    def __repr__(self):
+        '''
+        TODO: implement
+        '''
+        return super().__repr__(self)
+
+class UpdateError(Exception):
+    '''
+    Error when the call to apt-get update failed.
+
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    pass
+
+class UpgradeSimulError(Exception):
+    '''
+    Error for when the upgrade simulation failed.
+
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    pass
+
+class UpgradeOutputParseError(Exception):
+    '''
+    Error for when the upgrade output parsing failed
+
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    pass
+
+class GenerateOutputError(Exception):
+    '''
+    Error for when we were unable to generate the output.
+
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    pass
+
 ###
 #### program options
 ###
@@ -269,9 +331,11 @@ def write_msg(filename, msg, is_error):
     else:
         log.info('not writing error to output file b/c no_error_output is set')
 
-def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
+def check_network(server_address = DEFAULT_SERVER_ADDRESS):
     '''
     Determine whether the network (internet) is available.
+
+    Raises an exception to signal that the network is down.
 
     - checks routing table for default route
     - checks if the ubuntu servers are reachable
@@ -280,7 +344,8 @@ def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
     similate most condtions.
 
     @param server_address the ubuntu server to check. Defaults to the main us server.
-    @return True if the network is unavailable
+    @throws NoNetworkError
+    @return None
     @date Jan 27, 2011
     @author Matthew Todd
     '''
@@ -289,15 +354,84 @@ def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
         output = subprocess.getoutput('/sbin/route -n | grep -c "^0\.0\.0\.0"')
         if int(output) == 0:
             log.info("no default route in table")
-            return True
+            raise NoNetworkError()      # TODO: pass in info
 
         # ping ubuntu servers
         subprocess.check_output(['ping', '-q', '-c', '3', server_address])
     except (subprocess.CalledProcessError) as e:
         log.info("no network connection: %s" % e)
-        return True
+        raise NoNetworkError()          # TODO: pass in info
 
-    return False
+def call_update():
+    '''
+    Calls apt-get update.
+
+    Raises an exception if the update failed.
+
+    @throws UpdateFailedError
+    @return None
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    try:
+        retcode = subprocess.call(["sudo", "apt-get", "update", "-qq"])
+    except (subprocess.CalledProcessError, OSError) as e:
+        log.error("update failed with: %s" % e)
+        raise UpdateError()           # TODO: add info (retcode)
+
+def get_upgrade_output():
+    '''
+    Gets the output from the simulated upgrade.
+
+    Note that this is a SIMULATION (hence the --no-act.) Also note that this
+    doesn't use root priveleges, so its definitely not going to upgrade.
+
+    @throws UpgradeSimulError
+    @return the output string from the simulated upgrade
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    try:
+        ret = subprocess.check_output(['apt-get', 'upgrade', '--no-act', '-q'])
+        return ret.decode()
+    except (subprocess.CalledProcessError, OSError) as e:
+        log.error("upgrade --no-act failed with: %s" % e)
+        raise UpgradeSimulError()             # TODO: information (retcode)
+
+def parse_upgrade_output(upgrade_output):
+    '''
+    Parse/screen scrape the output of the simulated upgrade.
+
+    Uses regex, hence the return type.
+
+    @throws UpgradeOutputParseError
+    @returns a regex-match-object
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    regex = re.compile('([0-9]+) upgraded, ([0-9]+) newly installed, ([0-9]+) to remove and ([0-9]+) not upgraded.')
+    match_obj = regex.search(upgrade_output)
+
+    if match_obj == None:
+       raise UpgradeOutputParseError('regex failed')
+
+    return match_obj
+
+def generate_output(template, template_dict):
+    '''
+    Generates the output from the given template and its dict.
+
+    @throws GenerateOutputError
+    @return the output string
+    @date Feb 12, 2011
+    @author Matthew Todd
+    '''
+    try:
+        out_template = get_template(options.template_file, options.base_dir)
+        return out_template.format(**template_dict)
+    except KeyError as e:
+        log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
+        raise GenerateOutputError()         # TODO: pass info
 
 def create_template_dict(match_obj):
     '''
@@ -305,6 +439,7 @@ def create_template_dict(match_obj):
 
     @param match_obj the regex match object from "sudo apt-get upgrade ...". Contains the data to use
         to fill the dict.
+    @return dictionary with the template placeholder's as keys and their apporopriate values (from match_obj)
     @date Feb 11, 2011
     @author Matthew Todd
     '''
@@ -338,52 +473,50 @@ def main():
     log.info("out_file = '%s'" % out_file)
 
     try:
-        if network_unavailable():
-            log.error("network unavailable")
-            write_msg(out_file, NO_NETWORK_MSG, is_error=True)
-            return 3
+        check_network()
 
-        # call apt-get update
-        try:
-            retcode = subprocess.call(["sudo", "apt-get", "update", "-qq"])
-        except (subprocess.CalledProcessError, OSError) as e:
-            log.error("update failed with: %s" % e)
-            write_msg(out_file, FAILED_MSG, is_error=True)
-            return retcode
+        call_update()
 
-        # call and save upgrade --no-act
-        try:
-            ret = subprocess.check_output(['apt-get', 'upgrade', '--no-act', '-q'])
-            upgrade_output= ret.decode()
-        except (subprocess.CalledProcessError, OSError) as e:
-            log.error("upgrade --no-act failed with: %s" % e)
-            write_msg(out_file, FAILED_MSG, is_error=True)
-            return retcode
+        upgrade_output = get_upgrade_output()
 
-        # parse returned text
-        regex = re.compile('([0-9]+) upgraded, ([0-9]+) newly installed, ([0-9]+) to remove and ([0-9]+) not upgraded.')
-        match_obj = regex.search(upgrade_output)
-
-        if match_obj == None:
-            log.error('regex failed')
-            write_msg(out_file, FAILED_MSG, is_error=True)
-            return retcode
+        match_obj = parse_upgrade_output(upgrade_output)
 
         template_dict = create_template_dict(match_obj)
 
-        try:
-            out_template = get_template(options.template_file, options.base_dir)
-            output = out_template.format(**template_dict)
-        except KeyError as e:
-            write_msg(out_file, FAILED_MSG, is_error=True)
-            log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
-            return 2
+        template = get_template(options.template_file, options.base_dir)
 
-        # write out to conky
+        output = generate_output(template, template_dict)
+
         write_msg(out_file, output, is_error=False)
 
         log.info('normal exit: %s' % time.asctime())
         return 0
+
+
+    except NoNetworkError as e:
+        log.error("network unavailable")
+        write_msg(out_file, NO_NETWORK_MSG, is_error=True)
+        return 3
+
+    except UpdateError as e:
+        # TODO: log?
+        write_msg(out_file, FAILED_MSG, is_error=True)
+        return 1     # TODO: proper return
+
+    except UpgradeSimulError as e:
+        # TODO: log?
+        write_msg(out_file, FAILED_MSG, is_error=True)
+        return 1    # TODO: proper return
+
+    except UpgradeOutputParseError as e:
+        # TODO: log?
+        write_msg(out_file, FAILED_MSG, is_error=True)
+        return 1    # TODO: proper return
+
+    except GenerateOutputError as e:
+        # TODO: log?
+        write_msg(out_file, FAILED_MSG, is_error=True)
+        return 1    # TODO: proper return
 
     except Exception as e:
         log.error("Exception occured: %s" % e)
