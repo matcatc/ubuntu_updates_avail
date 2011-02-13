@@ -11,6 +11,15 @@ The items in this file aren't in order, but generally items towards the top are 
     add a main() function
     localize imports?
 
+- mash except statements into one general statment
+    What about printing error output?
+        Have the exceptinos store the error output
+    What about return codes?
+        Have the exceptions store the return code for their exception type?
+
+    How about having the exceptions store a key that can be used to access different dictionaries to get information relating to that particular exception.
+        What should the key be?
+        Should the key be something that can be used by others besides the exceptions?
 
 items to consider:
 no particular order
