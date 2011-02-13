@@ -74,7 +74,13 @@ NO_NETWORK_MSG = ' no network available'
 
 DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 
-
+ERROR_CODES = { 'general_error' : 10,
+                'no_network_error' : 11,
+                'update_error' : 12,
+                'upgrade_simul_error' : 13,
+                'upgrade_output_parse_error' : 14,
+                'generate_output_error' : 15,
+                }
 
 ###
 #### exceptions
@@ -560,37 +566,37 @@ def main():
     except NoNetworkError as e:
         log.error(e)
         write_msg(out_file, NO_NETWORK_MSG, is_error=True)
-        return 1    # TODO: proper return
+        return ERROR_CODES['no_network_error']
 
     except UpdateError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return 1     # TODO: proper return
+        return ERROR_CODES['update_error']
 
     except UpgradeSimulError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return 1    # TODO: proper return
+        return ERROR_CODES['upgrade_simul_error']
 
     except UpgradeOutputParseError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return 1    # TODO: proper return
+        return ERROR_CODES['upgrade_output_parser_error']
 
     except GenerateOutputError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return 1    # TODO: proper return
+        return ERROR_CODES['generate_output_error']
 
     except CustomException as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return 1    # TODO: proper return
+        return ERROR_CODES['general_error']
 
     except Exception as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return 1
+        return ERROR_CODES['general_error']
 
 if __name__ == "__main__":
     sys.exit(main())
