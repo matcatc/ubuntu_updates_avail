@@ -84,10 +84,7 @@ class NoNetworkError(Exception):
         return "No network available: %s" % self.error
 
     def __repr__(self):
-        '''
-        TODO: implement
-        '''
-        return super().__repr__(self)
+        return "NoNetworkError(error=%r)" % self.error
 
 class UpdateError(Exception):
     '''
@@ -96,7 +93,17 @@ class UpdateError(Exception):
     @date Feb 12, 2011
     @author Matthew Todd
     '''
-    pass
+    def __init__(self, error):
+        '''
+        @param error the exception that was thrown when we tried to run update
+        '''
+        self.error = error
+
+    def __str__(self):
+        return "Call to apt-get update failed: %s" % self.error
+
+    def __repr__(self):
+        return "UpdateError(error=%r)" % self.error
 
 class UpgradeSimulError(Exception):
     '''
@@ -105,7 +112,17 @@ class UpgradeSimulError(Exception):
     @date Feb 12, 2011
     @author Matthew Todd
     '''
-    pass
+    def __init__(self, error):
+        '''
+        @param error the exception raised when we tried to run the simulated upgrade
+        '''
+        self.error = error
+
+    def __str__(self):
+        return "Upgrade simulation failed: %s" % e
+
+    def __repr__(self):
+        return "UpgradeSimulError(error=%r)" % self.error
 
 class UpgradeOutputParseError(Exception):
     '''
@@ -114,7 +131,17 @@ class UpgradeOutputParseError(Exception):
     @date Feb 12, 2011
     @author Matthew Todd
     '''
-    pass
+    def __init__(self, error):
+        '''
+        @param error the reason that we failed
+        '''
+        self.error = error
+
+    def __str__(self):
+        return "Upgrade output parseing failed: %s" % e
+
+    def __repr__(self):
+        return "UpgradeOutputParseError(error=%r)" % self.error
 
 class GenerateOutputError(Exception):
     '''
@@ -123,7 +150,17 @@ class GenerateOutputError(Exception):
     @date Feb 12, 2011
     @author Matthew Todd
     '''
-    pass
+    def __init__(self, error):
+        '''
+        @param error the reason that we failed
+        '''
+        self.error = error
+
+    def __str__(self):
+        return "Generation of output failed: %s" % e
+
+    def __repr__(self):
+        return "GenerateOutputError(error=%r)" % self.error
 
 ###
 #### program options
@@ -349,18 +386,15 @@ def check_network(server_address = DEFAULT_SERVER_ADDRESS):
     @date Jan 27, 2011
     @author Matthew Todd
     '''
-    try:
-        # check for default route in routing table
-        output = subprocess.getoutput('/sbin/route -n | grep -c "^0\.0\.0\.0"')
-        if int(output) == 0:
-            log.info("no default route in table")
-            raise NoNetworkError()      # TODO: pass in info
+    # check for default route in routing table
+    output = subprocess.getoutput('/sbin/route -n | grep -c "^0\.0\.0\.0"')
+    if int(output) == 0:
+        raise NoNetworkError("no default route in table")
 
-        # ping ubuntu servers
-        subprocess.check_output(['ping', '-q', '-c', '3', server_address])
-    except (subprocess.CalledProcessError) as e:
-        log.info("no network connection: %s" % e)
-        raise NoNetworkError()          # TODO: pass in info
+    # ping ubuntu servers
+    ret_code, _ = subprocess.getstatusoutput('ping -q -c 3 %s' % server_address)
+    if ret_code > 0:
+        raise NoNetworkError("ping failed with return code: %d" % ret_code)
 
 def call_update():
     '''
@@ -374,10 +408,10 @@ def call_update():
     @author Matthew Todd
     '''
     try:
-        retcode = subprocess.call(["sudo", "apt-get", "update", "-qq"])
+        subprocess.check_call(["sudo", "apt-get", "update", "-qq"])
     except (subprocess.CalledProcessError, OSError) as e:
         log.error("update failed with: %s" % e)
-        raise UpdateError()           # TODO: add info (retcode)
+        raise UpdateError(e)
 
 def get_upgrade_output():
     '''
@@ -396,7 +430,7 @@ def get_upgrade_output():
         return ret.decode()
     except (subprocess.CalledProcessError, OSError) as e:
         log.error("upgrade --no-act failed with: %s" % e)
-        raise UpgradeSimulError()             # TODO: information (retcode)
+        raise UpgradeSimulError(e)
 
 def parse_upgrade_output(upgrade_output):
     '''
@@ -430,8 +464,7 @@ def generate_output(template, template_dict):
         out_template = get_template(options.template_file, options.base_dir)
         return out_template.format(**template_dict)
     except KeyError as e:
-        log.error('output formatting failed: unknown identifier/placeholder: %s' % e)
-        raise GenerateOutputError()         # TODO: pass info
+        raise GenerateOutputError('unknown identifier/placeholder: %s' % e)
 
 def create_template_dict(match_obj):
     '''
@@ -494,32 +527,32 @@ def main():
 
 
     except NoNetworkError as e:
-        log.error("network unavailable")
+        log.error(e)
         write_msg(out_file, NO_NETWORK_MSG, is_error=True)
-        return 3
+        return 1    # TODO: proper return
 
     except UpdateError as e:
-        # TODO: log?
+        log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1     # TODO: proper return
 
     except UpgradeSimulError as e:
-        # TODO: log?
+        log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1    # TODO: proper return
 
     except UpgradeOutputParseError as e:
-        # TODO: log?
+        log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1    # TODO: proper return
 
     except GenerateOutputError as e:
-        # TODO: log?
+        log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1    # TODO: proper return
 
     except Exception as e:
-        log.error("Exception occured: %s" % e)
+        log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1
 
