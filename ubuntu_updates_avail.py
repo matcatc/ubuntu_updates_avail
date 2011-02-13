@@ -266,6 +266,8 @@ def write_msg(filename, msg, is_error):
     if not (options.no_error_output and is_error):
         with open(filename, 'w') as f:
             f.write(msg)
+    else:
+        log.info('not writing error to output file b/c no_error_output is set')
 
 def network_unavailable(server_address = DEFAULT_SERVER_ADDRESS):
     '''
