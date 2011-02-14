@@ -67,7 +67,40 @@ DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 ###
 #### exceptions
 ###
-class NoNetworkError(Exception):
+class CustomException(Exception):
+    '''
+    Base class for our custom exceptions.
+
+    TODO: better name
+
+    @date Feb 13, 2011
+    @author Matthew Todd
+    '''
+    def __init__(self, error):
+        '''
+        @param error the error giving more details as to the exception
+        '''
+        self.error = error
+
+    def __str__(self):
+        '''
+        Default str() implementation.
+
+        Sub classes will likely want to override this as using the class name
+        is somewhat terse and not very 'informal'.
+        '''
+        return "%s: %s" % (self.__class__.__name__, self.error)
+
+    def __repr__(self):
+        '''
+        Defines default repr() implementation.
+
+        As long as subclasses don't have any other attributes besides error,
+        then they don't need to override this implementation.
+        '''
+        return "%s(error=%r)" % (self.__class__.__name__, self.error)
+
+class NoNetworkError(CustomException):
     '''
     Error when there is no network connection.
 
@@ -83,10 +116,7 @@ class NoNetworkError(Exception):
     def __str__(self):
         return "No network available: %s" % self.error
 
-    def __repr__(self):
-        return "NoNetworkError(error=%r)" % self.error
-
-class UpdateError(Exception):
+class UpdateError(CustomException):
     '''
     Error when the call to apt-get update failed.
 
@@ -102,10 +132,7 @@ class UpdateError(Exception):
     def __str__(self):
         return "Call to apt-get update failed: %s" % self.error
 
-    def __repr__(self):
-        return "UpdateError(error=%r)" % self.error
-
-class UpgradeSimulError(Exception):
+class UpgradeSimulError(CustomException):
     '''
     Error for when the upgrade simulation failed.
 
@@ -121,10 +148,7 @@ class UpgradeSimulError(Exception):
     def __str__(self):
         return "Upgrade simulation failed: %s" % e
 
-    def __repr__(self):
-        return "UpgradeSimulError(error=%r)" % self.error
-
-class UpgradeOutputParseError(Exception):
+class UpgradeOutputParseError(CustomException):
     '''
     Error for when the upgrade output parsing failed
 
@@ -140,10 +164,7 @@ class UpgradeOutputParseError(Exception):
     def __str__(self):
         return "Upgrade output parseing failed: %s" % e
 
-    def __repr__(self):
-        return "UpgradeOutputParseError(error=%r)" % self.error
-
-class GenerateOutputError(Exception):
+class GenerateOutputError(CustomException):
     '''
     Error for when we were unable to generate the output.
 
@@ -159,8 +180,6 @@ class GenerateOutputError(Exception):
     def __str__(self):
         return "Generation of output failed: %s" % e
 
-    def __repr__(self):
-        return "GenerateOutputError(error=%r)" % self.error
 
 ###
 #### program options
@@ -547,6 +566,11 @@ def main():
         return 1    # TODO: proper return
 
     except GenerateOutputError as e:
+        log.error(e)
+        write_msg(out_file, FAILED_MSG, is_error=True)
+        return 1    # TODO: proper return
+
+    except CustomException as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
         return 1    # TODO: proper return
