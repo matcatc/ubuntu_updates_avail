@@ -74,12 +74,18 @@ NO_NETWORK_MSG = ' no network available'
 
 DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 
-ERROR_CODES = { 'general_error' : 10,
-                'no_network_error' : 11,
-                'update_error' : 12,
-                'upgrade_simul_error' : 13,
-                'upgrade_output_parse_error' : 14,
-                'generate_output_error' : 15,
+NO_ERROR = 0
+
+## The key values to this dict must be the same as the names of the exceptions
+## to which they are related
+ERROR_CODES = {
+                'default' : 10,
+                'CustomException' : 11,
+                'NoNetworkError' : 12,
+                'UpdateError' : 13,
+                'UpgradSimulError' : 14,
+                'UpgradeOutputParseError' : 15,
+                'GenerateOutputError' : 16,
                 }
 
 ###
@@ -99,6 +105,8 @@ class CustomException(Exception):
         @param error the error giving more details as to the exception
         '''
         self.error = error
+
+        self.key = self.__class__.__name__
 
     def __str__(self):
         '''
@@ -131,6 +139,8 @@ class NoNetworkError(CustomException):
         '''
         self.error = error
 
+        self.key = self.__class__.__name__
+
     def __str__(self):
         return "No network available: %s" % self.error
 
@@ -146,6 +156,8 @@ class UpdateError(CustomException):
         @param error the exception that was thrown when we tried to run update
         '''
         self.error = error
+
+        self.key = self.__class__.__name__
 
     def __str__(self):
         return "Call to apt-get update failed: %s" % self.error
@@ -163,6 +175,8 @@ class UpgradeSimulError(CustomException):
         '''
         self.error = error
 
+        self.key = self.__class__.__name__
+
     def __str__(self):
         return "Upgrade simulation failed: %s" % e
 
@@ -179,6 +193,8 @@ class UpgradeOutputParseError(CustomException):
         '''
         self.error = error
 
+        self.key = self.__class__.__name__
+
     def __str__(self):
         return "Upgrade output parseing failed: %s" % e
 
@@ -194,6 +210,9 @@ class GenerateOutputError(CustomException):
         @param error the reason that we failed
         '''
         self.error = error
+
+        self.key = self.__class__.__name__
+
 
     def __str__(self):
         return "Generation of output failed: %s" % e
@@ -560,43 +579,43 @@ def main():
         write_msg(out_file, output, is_error=False)
 
         log.info('normal exit: %s' % time.asctime())
-        return 0
+        return NO_ERROR
 
 
     except NoNetworkError as e:
         log.error(e)
         write_msg(out_file, NO_NETWORK_MSG, is_error=True)
-        return ERROR_CODES['no_network_error']
+        return ERROR_CODES[e.key]
 
     except UpdateError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return ERROR_CODES['update_error']
+        return ERROR_CODES[e.key]
 
     except UpgradeSimulError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return ERROR_CODES['upgrade_simul_error']
+        return ERROR_CODES[e.key]
 
     except UpgradeOutputParseError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return ERROR_CODES['upgrade_output_parser_error']
+        return ERROR_CODES[e.key]
 
     except GenerateOutputError as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return ERROR_CODES['generate_output_error']
+        return ERROR_CODES[e.key]
 
     except CustomException as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return ERROR_CODES['general_error']
+        return ERROR_CODES[e.key]
 
     except Exception as e:
         log.error(e)
         write_msg(out_file, FAILED_MSG, is_error=True)
-        return ERROR_CODES['general_error']
+        return ERROR_CODES['default']
 
 if __name__ == "__main__":
     sys.exit(main())
