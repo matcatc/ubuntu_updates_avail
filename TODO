@@ -76,6 +76,9 @@ no particular order
 
 - short command line options
     going to be hard to do well
+    note that it is common for some applications to have lowercase options be positive and uppercase be negative.
+        Ex: -u update
+            -U no-update
 
 - option: server address
     allow user to specify the server to ping in order to verify network connectivity
