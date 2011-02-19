@@ -9,13 +9,9 @@ curr_running: what's currently running on my system (for testing purposes.)
 Usually branches are in this order (<= ordering):
     origin/master - master - curr_running - develop - topical
 
+
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
-
-- test d_refactor
-    merge into develop
-    merge curr_running into master 
-    merge d_refactor into curr_running
 
 - proper and unique exit codes
     Will want a MACRO dictionary or the like
@@ -111,3 +107,6 @@ no particular order
         separate file?
             command line option?
 
+- version number
+    we'll want a way to specify this easily
+    DRY: if we end up using a setup.py, we'll want one source for the version number
