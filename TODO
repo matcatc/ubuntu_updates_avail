@@ -1,3 +1,14 @@
+branch descriptions:
+
+master: ready to be seen by whole world
+develop: what's being worked on. Parent branch for topical branches. Topical branches are merged into develop once they are done. They sit in develop for a little while before being tested (through curr_running.)
+    d_...: development topical branch
+    b_...: bug topical branch
+curr_running: what's currently running on my system (for testing purposes.)
+
+Usually branches are in this order (<= ordering):
+    origin/master - master - curr_running - develop - topical
+
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
@@ -5,11 +16,11 @@ The items in this file aren't in order, but generally items towards the top are 
     if there's no obvious bugs after running for a while, go ahead and merge in master and push to origin.
         whatever feels like long enough. A week is probably fine.
 
-- refactoring
-    split the script into functions
-        localization of code
-    add a main() function
-    localize imports?
+
+- test d_refactor
+    merge into develop
+    merge curr_running into master 
+    merge d_refactor into curr_running
 
 - mash except statements into one general statment
     What about printing error output?
