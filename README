@@ -4,15 +4,19 @@ conky.
 Simply run it on a cron job, then cat in the outputted file in your conky
 (${execi <interval> cat ~/.conky/ubuntu_updates_avail.info})
 
-Its currently not designed to be configurable via command line options, so
-you'll have to go in and edit the file if you want it to act differently.
-The only thing most people will want to change is the output, which should
-be easy to do even if you don't know python - just change the string named
-`output`.)
+See the --help output for a list of command line options.
 
 Note that it requires root privileges to call apt-get update.
 
 See the in file documentation for more info (including licensing.)
+
+Because of the nature of the script, it is very difficult to test. I think I
+probably could write unit tests for all of it by extracting the subprocess
+calls to their own objects then mocking them, but doing so might not be
+worthwhile. Anyways, until I get testing setup, the script is not going to be
+extensively tested. So bug reports will be very much appreciated. If I don't
+see the bug when running the script myself, then I am relient on you and other
+users to report them to me, so please do.
 
 Matthew Todd
 Jan 15, 2010

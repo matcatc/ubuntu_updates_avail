@@ -11,12 +11,24 @@ take long enough that conky will freeze for a couple of seconds. Also note that
 your conky will then require root access. But if you run this via cron and out_file,
 only this will get root access.
 
-@note: b/c script is calling apt-get, it requires root access, via sudo. Its
+@note
+b/c script is calling apt-get, it requires root access, via sudo. Its
 possible to remove the need for sudo by removing the call to 'apt-get update',
 but then you'd have to rely on the os to update the local package information
 on its own (which it probably already does.)
 
-@note: to change what info appears in your conky, edit `output`
+@note
+see --help output (or look in the code below) to see what command line
+options are available.
+
+@note
+Because of the nature of the script, it is very difficult to test. I think I
+probably could write unit tests for all of it by extracting the subprocess
+calls to their own objects then mocking them, but doing so might not be
+worthwhile. Anyways, until I get testing setup, the script is not going to be
+extensively tested. So bug reports will be very much appreciated. If I don't
+see the bug when running the script myself, then I am relient on you and other
+users to report them to me, so please do.
 
 @license
 This program is free software: you can redistribute it and/or modify
