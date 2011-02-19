@@ -102,4 +102,12 @@ no particular order
 
 - change default output to something more sensible.
 
+- testing
+    unit testing won't be easy due to the calls to the subprocesses
+        extract calls to subprocesses to functions/objects
+            mock them in unit tests
+    how big will the unit testing be in relation to the code?
+        how much is acceptable?
+        separate file?
+            command line option?
 
