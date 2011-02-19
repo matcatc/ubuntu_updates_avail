@@ -17,6 +17,11 @@ The items in this file aren't in order, but generally items towards the top are 
     merge curr_running into master 
     merge d_refactor into curr_running
 
+- proper and unique exit codes
+    Will want a MACRO dictionary or the like
+ - proper and unique error messages for the different situations
+    Perhaps make the error messages contain the exit codes too
+
 - mash except statements into one general statment
     What about printing error output?
         Have the exceptinos store the error output
@@ -96,10 +101,5 @@ no particular order
     or perhaps just update the README?
 
 - change default output to something more sensible.
-
-- proper and unique exit codes
-    Will want a MACRO dictionary or the like
- - proper and unique error messages for the different situations
-    Perhaps make the error messages contain the exit codes too
 
 
