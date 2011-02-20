@@ -69,8 +69,6 @@ DEFAULT_OUTPUT_TEMPLATE = '''\
  remove             {remove}
  not upgraded       {not_upgraded}'''
  
-FAILED_MSG = ' update check failed'             # generic failure msg
-NO_NETWORK_MSG = ' no network available'
 
 DEFAULT_SERVER_ADDRESS = 'us.archive.ubuntu.com'
 
@@ -86,6 +84,18 @@ ERROR_CODES = {
                 'UpgradSimulError' : 14,
                 'UpgradeOutputParseError' : 15,
                 'GenerateOutputError' : 16,
+                }
+
+## The key values to this dict must be the same as the names of the exceptions
+## to which they are related
+FAILED_MSG = ' update check failed'             # generic failure msg
+ERROR_MSGS = {  'default'                   : FAILED_MSG,
+                'CustomException'           : FAILED_MSG,
+                'NoNetworkError'            : ' no network available',
+                'UpdateError'               : ' failed to update package info',
+                'UpgradSimulError'          : ' failed to simulate upgrade',
+                'UpgradeOutputParseError'   : ' failed to parse simulated upgrade output',
+                'GenerateOutputError'       : ' failed to generate outut',
                 }
 
 ###
@@ -584,37 +594,37 @@ def main():
 
     except NoNetworkError as e:
         log.error(e)
-        write_msg(out_file, NO_NETWORK_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except UpdateError as e:
         log.error(e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except UpgradeSimulError as e:
         log.error(e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except UpgradeOutputParseError as e:
         log.error(e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except GenerateOutputError as e:
         log.error(e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except CustomException as e:
         log.error(e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except Exception as e:
         log.error(e)
-        write_msg(out_file, FAILED_MSG, is_error=True)
+        write_msg(out_file, ERROR_MSGS['default'], is_error=True)
         return ERROR_CODES['default']
 
 if __name__ == "__main__":
