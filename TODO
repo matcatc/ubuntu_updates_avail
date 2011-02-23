@@ -1,6 +1,7 @@
 branch descriptions:
 
 master: ready to be seen by whole world
+    question: when to push to origin/master?
 develop: what's being worked on. Parent branch for topical branches. Topical branches are merged into develop once they are done. They sit in develop for a little while before being tested (through curr_running.)
     d_...: development topical branch
     b_...: bug topical branch
@@ -41,10 +42,10 @@ The items in this file aren't in order, but generally items towards the top are 
             Or have all of the dict's definition in one place?
                 Clearer what's in dict, but exception code spread out (harder to add/remove/edit exceptions)
 
+
 items to consider:
 no particular order
 -------------------
-
 - option: max width of output
     That way the output won't get too long and mess up conky
     Should be easy, just use textwrap module
