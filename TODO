@@ -111,3 +111,5 @@ no particular order
 - version number
     we'll want a way to specify this easily
     DRY: if we end up using a setup.py, we'll want one source for the version number
+
+- look into aptdaemon package for python. Supposed to be a dbus interface for debian based package management. Don't know if it'll work for what we're doing, but definitely worth a look.
