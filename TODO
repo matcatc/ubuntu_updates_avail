@@ -59,6 +59,10 @@ no particular order
 - option: --no-root
     don't do anything requiring root
 
+- option: number of tries for apt-get update
+    -c (from ping)
+    I've noticed that apt-get update has been failing a lot recently b/c of dns issues. So if we add a number of tries (default 1) then it will keep trying to update until it suceedes or until the number is reached.
+
 - option: --no-update
     don't update
     b/c:
@@ -113,3 +117,4 @@ no particular order
     DRY: if we end up using a setup.py, we'll want one source for the version number
 
 - look into aptdaemon package for python. Supposed to be a dbus interface for debian based package management. Don't know if it'll work for what we're doing, but definitely worth a look.
+
