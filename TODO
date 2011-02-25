@@ -6,6 +6,7 @@ develop: what's being worked on. Parent branch for topical branches. Topical bra
     d_...: development topical branch
     b_...: bug topical branch
 curr_running: what's currently running on my system (for testing purposes.)
+todo: branch to contain this file (TODO).  Not going to be rebased to clean up history so that others can see what I was thinking when working on particular features.
 
 Usually branches are in this order (<= ordering):
     origin/master - master - curr_running - develop - topical
