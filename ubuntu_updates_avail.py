@@ -290,6 +290,10 @@ def program_options():
                         help='''Do not update output file with errors. If
                             update was unsucessful, leave old file untouched.''')
 
+    parser.add_option("-c", "--num_update_checks", dest="num_update_checks",
+                        action="store", type="int", default=1,
+                        help="Number of times to try apt-get update before failing. Default is 1. 0 tries implies that it is not to update.")
+
     (options, args) = parser.parse_args()
 
     if options.version:
@@ -462,22 +466,47 @@ def check_network(server_address = DEFAULT_SERVER_ADDRESS):
     if ret_code > 0:
         raise NoNetworkError("ping failed with return code: %d" % ret_code)
 
-def call_update():
+def call_update(num_update_checks):
     '''
     Calls apt-get update.
 
     Raises an exception if the update failed.
 
+    @param num_update_checks The number of times to try updating. Negative numbers are equivalent to 0.
     @throws UpdateFailedError
     @return None
     @date Feb 12, 2011
     @author Matthew Todd
     '''
-    try:
-        subprocess.check_call(["sudo", "apt-get", "update", "-qq"])
-    except (subprocess.CalledProcessError, OSError) as e:
-        log.error("update failed with: %s" % e)
-        raise UpdateError(e)
+    def ordinal(num):
+        '''
+        Return the ordinal of the number
+
+        Placeholder function.
+
+        @date Feb 25, 2011
+        @author Matthew Todd
+        '''
+        return num
+
+    if num_update_checks < 1:
+        log.info("number of times to update is %d (less than 1), therefore not updating" % num_update_checks)
+        return
+
+    fail_count = 0
+    while True:
+        try:
+            subprocess.check_call(["sudo", "apt-get", "update", "-qq"])
+            break
+        except (subprocess.CalledProcessError, OSError) as e:
+            fail_count += 1
+            log.error("update failed for %d try with: %s" % (ordinal(fail_count), e))
+
+            if fail_count >= num_update_checks:
+                raise UpdateError(e)
+
+    log.info("update succeeded")
+
 
 def get_upgrade_output():
     '''
@@ -574,7 +603,7 @@ def main():
     try:
         check_network()
 
-        call_update()
+        call_update(options.num_update_checks)
 
         upgrade_output = get_upgrade_output()
 
