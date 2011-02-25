@@ -50,11 +50,6 @@ The items in this file aren't in order, but generally items towards the top are 
     issues. So if we add a number of tries (default 1) then it will keep trying to
     update until it suceedes or until the number is reached.
 
-
-items to consider:
-no particular order
--------------------
-
 - option: --no-update
     don't update
     b/c:
@@ -63,6 +58,11 @@ no particular order
         script may not be smart enough (e.g: local mirror and no internet, script may terminate early b/c in a normal setup the computer wouldn't be able to update)
         may be running regularly to debug, and don't want it updating a lot
     may be able to combine this with 'number of tries for apt-get update' by setting the number to 0.
+
+items to consider:
+no particular order
+-------------------
+
 
 - option: no network check
     I've noticed a failed ping several times when there was a network. Perhaps
@@ -129,4 +129,9 @@ no particular order
     DRY: if we end up using a setup.py, we'll want one source for the version number
 
 - look into aptdaemon package for python. Supposed to be a dbus interface for debian based package management. Don't know if it'll work for what we're doing, but definitely worth a look.
+
+- implement ordinal()
+    used in call_update() to pretty print which update try just failed. Minor feature.
+
+
 
