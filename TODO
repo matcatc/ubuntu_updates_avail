@@ -15,10 +15,26 @@ Usually branches are in this order (<= ordering):
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
-- proper and unique exit codes
-    Will want a MACRO dictionary or the like
- - proper and unique error messages for the different situations
+- proper and unique error messages for the different situations
     Perhaps make the error messages contain the exit codes too
+
+- option: number of tries for apt-get update
+    -c (from ping)
+
+    I've noticed that apt-get update has been failing a lot recently b/c of dns
+    issues. So if we add a number of tries (default 1) then it will keep trying to
+    update until it suceedes or until the number is reached.
+
+- option: --no-update
+    don't update
+    b/c:
+        system may already be
+        reduces runtime
+        script may not be smart enough (e.g: local mirror and no internet, script may terminate early b/c in a normal setup the computer wouldn't be able to update)
+        may be running regularly to debug, and don't want it updating a lot
+    may be able to combine this with 'number of tries for apt-get update' by setting the number to 0.
+
+---------------------- everything above this line is in testing ---------------------------------
 
 - mash except statements into one general statment
     What about printing error output?
@@ -43,26 +59,15 @@ The items in this file aren't in order, but generally items towards the top are 
             Or have all of the dict's definition in one place?
                 Clearer what's in dict, but exception code spread out (harder to add/remove/edit exceptions)
 
-- option: number of tries for apt-get update
-    -c (from ping)
-
-    I've noticed that apt-get update has been failing a lot recently b/c of dns
-    issues. So if we add a number of tries (default 1) then it will keep trying to
-    update until it suceedes or until the number is reached.
-
-- option: --no-update
-    don't update
-    b/c:
-        system may already be
-        reduces runtime
-        script may not be smart enough (e.g: local mirror and no internet, script may terminate early b/c in a normal setup the computer wouldn't be able to update)
-        may be running regularly to debug, and don't want it updating a lot
-    may be able to combine this with 'number of tries for apt-get update' by setting the number to 0.
-
 items to consider:
 no particular order
 -------------------
 
+- options: underscore '_' vs. dash '-'
+    I've been using _'s in the option names up till now and can only wonder if
+    it would be better to use -'s. They both use the same key, but underscores
+    require use of Shift, so can be considered harder to do. As a programmer I'm
+    used to doing underscores, but normal users are probably not.
 
 - option: no network check
     I've noticed a failed ping several times when there was a network. Perhaps
