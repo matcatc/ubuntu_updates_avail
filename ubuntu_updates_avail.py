@@ -260,6 +260,15 @@ def program_options():
                     upgradable is the sum of upgrade and not_upgraded. This is likely what you'll
                     want to use most of the time.''')
 
+    num_update_checks_help = textwrap.dedent('''\
+            Number of times to try apt-get update before failing. Default is 1.
+            0 tries implies that it is not to update.''')
+
+    no_update_help = textwrap.dedent('''\
+            Do not update. Note that this option conflicts with
+            --num_update_checks (for obvious reasons). If both are specified,
+            which one is used isn't specified.''')
+
     parser = OptionParser(usage)
     parser.add_option("--version", dest="version",
                         action="store_true", default=False,
@@ -292,7 +301,11 @@ def program_options():
 
     parser.add_option("-c", "--num_update_checks", dest="num_update_checks",
                         action="store", type="int", default=1,
-                        help="Number of times to try apt-get update before failing. Default is 1. 0 tries implies that it is not to update.")
+                        help=num_update_checks_help)
+
+    parser.add_option("--no_update", dest="num_update_checks",
+                        action="store_const", const=0,
+                        help=no_update_help)
 
     (options, args) = parser.parse_args()
 
