@@ -45,27 +45,9 @@ The items in this file aren't in order, but generally items towards the top are 
         5e5964519cc24e271dd6756dbf9662788c6800b5 - right after we finished the refactor and the associated exception related code (error codes and error messages)
 
 - mash except statements into one general statment
-    What about printing error output?
-        Have the exceptinos store the error output
-    What about return codes?
-        Have the exceptions store the return code for their exception type?
-
-    How about having the exceptions store a key that can be used to access different dictionaries to get information relating to that particular exception.
-        What should the key be?
-            Consider: __name__ (of the exception class)
-        Should the key be something that can be used by others besides the exceptions?
-
-        What about defining the dicts?
-            Would we want the definition of each Exception class to add itself to the dict (during definition)
-                Dict def spread out over code, but exception code local (easier to add/remove/edit exceptions)
-                Might be problematic in making sure that each exception has its own unique error code.
-                    What about dynamically assigned error codes?
-                        Perhaps have an option for the user to request them?
-                        Probably more work than their worth. Maybe interesting to prototype though.
-                    What about macros uptop?
-                        What's the difference from just defining the whole dictionary uptop then?
-            Or have all of the dict's definition in one place?
-                Clearer what's in dict, but exception code spread out (harder to add/remove/edit exceptions)
+    Error messages and return codes can now be gained by using the exception's
+        key and the appropriate dicts, so we don't need to actually know the
+        exception's type anymore.
 
 - option: no network check
     I've noticed a failed ping several times when there was a network. Perhaps
