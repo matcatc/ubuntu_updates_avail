@@ -19,6 +19,11 @@ tagging:
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
+- mash except statements into one general statment
+    Error messages and return codes can now be gained by using the exception's
+        key and the appropriate dicts, so we don't need to actually know the
+        exception's type anymore.
+
 - option: number of tries for apt-get update
     -c (from ping)
 
@@ -37,11 +42,6 @@ The items in this file aren't in order, but generally items towards the top are 
 
 ---------------------- everything above this line is in testing ---------------------------------
 
-
-- mash except statements into one general statment
-    Error messages and return codes can now be gained by using the exception's
-        key and the appropriate dicts, so we don't need to actually know the
-        exception's type anymore.
 
 - option: no network check
     I've noticed a failed ping several times when there was a network. Perhaps
