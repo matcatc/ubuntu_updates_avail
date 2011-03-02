@@ -591,32 +591,6 @@ def main():
         log.info('normal exit: %s' % time.asctime())
         return NO_ERROR
 
-
-    except NoNetworkError as e:
-        log.error(e)
-        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
-        return ERROR_CODES[e.key]
-
-    except UpdateError as e:
-        log.error(e)
-        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
-        return ERROR_CODES[e.key]
-
-    except UpgradeSimulError as e:
-        log.error(e)
-        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
-        return ERROR_CODES[e.key]
-
-    except UpgradeOutputParseError as e:
-        log.error(e)
-        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
-        return ERROR_CODES[e.key]
-
-    except GenerateOutputError as e:
-        log.error(e)
-        write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
-        return ERROR_CODES[e.key]
-
     except CustomException as e:
         log.error(e)
         write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
