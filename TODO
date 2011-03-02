@@ -12,6 +12,10 @@ Usually branches are in this order (<= ordering):
     origin/master - master - curr_running - develop - topical
 
 
+tagging:
+    5e5964519cc24e271dd6756dbf9662788c6800b5 - added error codes / messages and corresponding dict/key scheme
+
+
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
@@ -33,16 +37,6 @@ The items in this file aren't in order, but generally items towards the top are 
 
 ---------------------- everything above this line is in testing ---------------------------------
 
-- tag
-    Add tags so we have some intermediate versions?
-    Question is where to put them.
-    I just don't want one huge release with a crap load of new features and
-        stuff. But on the other hand, it doesn't feel like anything is worth tagging
-        yet.
-    Possible locations:
-        18b6924c08cb67b2471d0eebec45aa7e30e27b95 - right before we started the refactor (had added some features)
-        e7006782b61f504020db053692985ac338015d11 - Perhaps one before we started the refactor (based on features). This seems like a good place.
-        5e5964519cc24e271dd6756dbf9662788c6800b5 - right after we finished the refactor and the associated exception related code (error codes and error messages)
 
 - mash except statements into one general statment
     Error messages and return codes can now be gained by using the exception's
