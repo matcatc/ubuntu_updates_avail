@@ -7,13 +7,15 @@ develop: what's being worked on. Parent branch for topical branches. Topical bra
     b_...: bug topical branch
 curr_running: what's currently running on my system (for testing purposes.)
 todo: branch to contain this file (TODO).  Not going to be rebased to clean up history so that others can see what I was thinking when working on particular features.
+changelog: branch to contain the changelog file. Each commit should correspond to an associted tag/release (unless we're trying to fix a mistake in the changelog and we already pushed it).
 
 Usually branches are in this order (<= ordering):
     origin/master - master - curr_running - develop - topical
 
 
 tagging:
-    5e5964519cc24e271dd6756dbf9662788c6800b5 - added error codes / messages and corresponding dict/key scheme
+    120f7e67bb2ebace60d3f073ccd57b3f0acb34e6 - added error codes / messages and corresponding dict/key scheme, generalized exceptions
+
 
 
 The items in this file aren't in order, but generally items towards the top are more important.
@@ -67,12 +69,6 @@ no particular order
     It may be possible to have each option have an '_' and '-' version, so that
         the user just has to be consistent within the option, but can mix-and-match
         them between options.
-
-- option: no update if no internet?
-    make default?
-        then provide a way to override (--force-update or --always-update)
-    what about cases where the user has a local mirror?
-        as long as the proper adddress is specified, our current network checking code should work.
 
 - option: --no-root
     don't do anything requiring root
