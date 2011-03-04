@@ -275,23 +275,23 @@ def program_options():
                         help='''print version information and quit''')
 
     parser.add_option("--base_dir", dest="base_dir",
-                        action="store", default=".",
+                        action="store", type="string", default=".",
                         help="""Location to store output file and log file (if log file isn't given its own directory)""")
 
     parser.add_option("--log_file", dest="log_file",
-                        action="store", default="ubuntu_updates_avail.log",
+                        action="store", type="string", default="ubuntu_updates_avail.log",
                         help="""Name of generated log file""")
 
     parser.add_option("--log_dir", dest="log_dir",
-                        action="store", default=None,
+                        action="store", type="string", default=None,
                         help="""Location to store the generated log file""")
 
     parser.add_option("--log_level", dest="log_level",
-                        action="store", default="debug",
+                        action="store", type="string", default="debug",
                         help="""The log level""")
 
     parser.add_option("--template", dest="template_file",
-                        action="store", default=None,
+                        action="store", type="string", default=None,
                         help=template_help)
 
     parser.add_option("--no_error_output", dest="no_error_output",
