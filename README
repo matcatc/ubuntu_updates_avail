@@ -61,6 +61,13 @@ extensively tested. So bug reports will be very much appreciated. If I don't
 see the bug when running the script myself, then I am reliant on you and other
 users to report them to me, so please do.
 
+I'm currently considering dropping the network checking ability altogether. It
+never really worked well (too many false positives) and I feel that trying
+update several times works much better. But before I remove this feature, I'd
+like to get some user feedback. Please send me an email (see below) if you have
+an opinion on this (or anything else) which you'd like to share. If I don't get
+any feedback, I'll probably end up removing it to reduce code complexity.
+
 
 Downloads
 ---------

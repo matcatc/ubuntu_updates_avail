@@ -310,6 +310,12 @@ def program_options():
     parser.add_option("--no_update", dest="num_update_checks",
                         action="store_const", const=0,
                         help=no_update_help)
+    
+    parser.add_option("--network_check", dest="network_check",
+                        action="store_true", default=False,
+                        help='''Enable network checking. Will verify network's
+                        prescence before trying to update. Note that network
+                        check's accuracy cannot be guaranteed.''')
 
     (options, args) = parser.parse_args()
 
@@ -625,7 +631,8 @@ def main():
     log.info("out_file = '%s'" % out_file)
 
     try:
-        check_network()
+        if options.network_check:
+            check_network()
 
         call_update(options.num_update_checks, options.sleep_period)
 
