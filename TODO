@@ -55,6 +55,10 @@ items to consider:
 no particular order
 -------------------
 
+- option: time to sleep between update tries
+    If update regularly fails based on clock time, then this might be useful (as when we try again the system is in another state.) If update just randomly fails, with no regards to time, then this won't increase the chances of success. Regardless, this will prevent update from being called a bunch of times in a row, so if an user wanted to spread them out (even in terms of seconds) so as to prevent spamming, its possible.
+    Note that we should make negative numbers just default to 0.
+
 - options: underscore '_' vs. dash '-'
     I've been using _'s in the option names up till now and can only wonder if
         it would be better to use -'s. They both use the same key, but underscores
