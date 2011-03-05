@@ -46,24 +46,15 @@ The items in this file aren't in order, but generally items towards the top are 
 ---------------------- everything above this line is in testing ---------------------------------
 
 
+- option: time to sleep between update tries
+    If update regularly fails based on clock time, then this might be useful (as when we try again the system is in another state.) If update just randomly fails, with no regards to time, then this won't increase the chances of success. Regardless, this will prevent update from being called a bunch of times in a row, so if an user wanted to spread them out (even in terms of seconds) so as to prevent spamming, its possible.
+    Note that we should make negative numbers just default to 0.
 
 
 items to consider:
 no particular order
 -------------------
 
-- option: time to sleep between update tries
-    If update regularly fails based on clock time, then this might be useful (as when we try again the system is in another state.) If update just randomly fails, with no regards to time, then this won't increase the chances of success. Regardless, this will prevent update from being called a bunch of times in a row, so if an user wanted to spread them out (even in terms of seconds) so as to prevent spamming, its possible.
-    Note that we should make negative numbers just default to 0.
-
-- options: underscore '_' vs. dash '-'
-    I've been using _'s in the option names up till now and can only wonder if
-        it would be better to use -'s. They both use the same key, but underscores
-        require use of Shift, so can be considered harder to do. As a programmer I'm
-        used to doing underscores, but normal users are probably not.
-    It may be possible to have each option have an '_' and '-' version, so that
-        the user just has to be consistent within the option, but can mix-and-match
-        them between options.
 
 - option: --no-root
     don't do anything requiring root
@@ -71,10 +62,6 @@ no particular order
 - option: max width of output
     That way the output won't get too long and mess up conky
     Should be easy, just use textwrap module
-
-- no ping output to terminal
-    not high priority b/c only times users will see this is when debugging/ trying out for the first time
-        although first impressions are pretty important
 
 - other time formats
     current time format is long and annoying
@@ -84,8 +71,21 @@ no particular order
             might require parsing the template and removing stuff
             perhaps could pass template through time printing function
 
+- no ping output to terminal
+    not high priority b/c only times users will see this is when debugging/ trying out for the first time
+        although first impressions are pretty important
+
 - KISS
     is the script becoming too complicated?
+
+- options: underscore '_' vs. dash '-'
+    I've been using _'s in the option names up till now and can only wonder if
+        it would be better to use -'s. They both use the same key, but underscores
+        require use of Shift, so can be considered harder to do. As a programmer I'm
+        used to doing underscores, but normal users are probably not.
+    It may be possible to have each option have an '_' and '-' version, so that
+        the user just has to be consistent within the option, but can mix-and-match
+        them between options.
 
 - short command line options
     going to be hard to do well
