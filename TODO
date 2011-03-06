@@ -14,7 +14,7 @@ Usually branches are in this order (<= ordering):
 
 
 tagging:
-    120f7e67bb2ebace60d3f073ccd57b3f0acb34e6 - added error codes / messages and corresponding dict/key scheme, generalized exceptions
+    ? - after number tries for update and related code (no update, time to sleep between). Also include log options.
 
 
 
@@ -37,6 +37,12 @@ The items in this file aren't in order, but generally items towards the top are 
         may be running regularly to debug, and don't want it updating a lot
     may be able to combine this with 'number of tries for apt-get update' by setting the number to 0.
 
+- option: time to sleep between update tries
+    If update regularly fails based on clock time, then this might be useful (as when we try again the system is in another state.) If update just randomly fails, with no regards to time, then this won't increase the chances of success. Regardless, this will prevent update from being called a bunch of times in a row, so if an user wanted to spread them out (even in terms of seconds) so as to prevent spamming, its possible.
+    Note that we should make negative numbers just default to 0.
+
+- log options
+
 - option: no network check
     I've noticed a failed ping several times when there was a network. Perhaps
     it'd be better to use the number of tries for 'apt-get update', which is the
@@ -45,10 +51,6 @@ The items in this file aren't in order, but generally items towards the top are 
 
 ---------------------- everything above this line is in testing ---------------------------------
 
-
-- option: time to sleep between update tries
-    If update regularly fails based on clock time, then this might be useful (as when we try again the system is in another state.) If update just randomly fails, with no regards to time, then this won't increase the chances of success. Regardless, this will prevent update from being called a bunch of times in a row, so if an user wanted to spread them out (even in terms of seconds) so as to prevent spamming, its possible.
-    Note that we should make negative numbers just default to 0.
 
 
 items to consider:
