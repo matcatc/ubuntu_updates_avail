@@ -97,6 +97,11 @@ no particular order
     allow user to specify the server to ping in order to verify network connectivity
 
 - better looking --help output
+    Not clear if we can actually change the formatting, at least in optparse.
+
+- argparse module.
+    The new python release comes with the module argparse which is intended as a replacement for optparse. Look into whether this is any better for our uses.
+    Also, make sure that we don't switch to argparse too early, we still want to be backward compatible with 3.1.2 for a little while (until 3.2 is released for ubuntu)
 
 - add docs (docbook) ?
     the script has certainly gotten large enough that a manpage may be desired
