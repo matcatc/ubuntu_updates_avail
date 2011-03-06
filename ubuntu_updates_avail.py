@@ -428,6 +428,7 @@ def compute_log_dir(log_dir, base_dir):
 setupLogging(compute_log_dir(options.log_dir, options.base_dir), options.log_file, options.log_level)
 log = logging.getLogger(__name__)
 
+log.info("options = %r, args = %r" % (options, args))           # never know when we might need this info
 
 ###
 #### helper functions
