@@ -303,6 +303,10 @@ def program_options():
                         action="store", type="int", default=1,
                         help=num_update_checks_help)
 
+    parser.add_option("--sleep_period", dest="sleep_period",
+                        action="store", type="int", default=0,
+                        help="how long to sleep between update tries.")
+
     parser.add_option("--no_update", dest="num_update_checks",
                         action="store_const", const=0,
                         help=no_update_help)
@@ -479,13 +483,14 @@ def check_network(server_address = DEFAULT_SERVER_ADDRESS):
     if ret_code > 0:
         raise NoNetworkError("ping failed with return code: %d" % ret_code)
 
-def call_update(num_update_checks):
+def call_update(num_update_checks, sleep_period):
     '''
     Calls apt-get update.
 
     Raises an exception if the update failed.
 
     @param num_update_checks The number of times to try updating. Negative numbers are equivalent to 0.
+    @param sleep_period How long to sleep between update tries. Negative numbers are equivalent to 0.
     @throws UpdateFailedError
     @return None
     @date Feb 12, 2011
@@ -506,6 +511,9 @@ def call_update(num_update_checks):
         log.info("number of times to update is %d (less than 1), therefore not updating" % num_update_checks)
         return
 
+    if sleep_period < 0:
+        sleep_period = 0
+
     fail_count = 0
     while True:
         try:
@@ -518,8 +526,10 @@ def call_update(num_update_checks):
             if fail_count >= num_update_checks:
                 raise UpdateError(e)
 
-    log.info("update succeeded")
+            log.info("sleeping for %d seconds before trying to update again" % sleep_period)
+            time.sleep(sleep_period)        # sleep before trying to update again
 
+    log.info("update succeeded")
 
 def get_upgrade_output():
     '''
@@ -616,7 +626,7 @@ def main():
     try:
         check_network()
 
-        call_update(options.num_update_checks)
+        call_update(options.num_update_checks, options.sleep_period)
 
         upgrade_output = get_upgrade_output()
 
