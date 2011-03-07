@@ -1,22 +1,81 @@
-This is a simple script that I wrote in order to display update info in my
-conky.
+This is a simple script that I wrote in order to display update info in my conky.
 
-Simply run it on a cron job, then cat in the outputted file in your conky
-(${execi <interval> cat ~/.conky/ubuntu_updates_avail.info})
+
+Requirements
+------------
+- python 3
+- apt-get
+
+While I made it for my Ubuntu install, since it uses apt-get, any machine with
+apt-get properly setup should be able to use this script. Also, although I
+wrote this script with python 3, its probably close enough to python2 that one
+could port it easily one was so inclined.
+
+
+Installation
+------------
+
+1) Just drop ubuntu_updates_avail.py in a directory somewhere.
+
+2) If you want it to be run on a cron job (which is what most people will
+    want), then add a line to the crontab:
+        `crontab -e`
+        `sudo crontab -e` (for root's crontab)
+
+    If you're going to have the script call update (which is default
+    behavior), then it'll need root access, and thus should be put in the
+    root's crontab.
+
+    ex) Here's an example from my root crontab:
+        `@hourly /home/user_name/.conky/ubuntu_updates_avail.py --base_dir /home/user_name/.conky/ --template template --num_update_checks 3 ubuntu_updates_avail.info`
+
+3) Add a line to your conky script to read in the generated file
+
+    ex)
+    `${execi 900 cat ~/.conky/ubuntu_updates_avail.info}`
+
+
+Licensing
+---------
+
+Licensed under GNU GPL v.3.0.
+
+See COPYING and the in file documentation for more information.
+
+
+Notes
+-----
 
 See the --help output for a list of command line options.
 
 Note that it requires root privileges to call apt-get update.
 
-See the in file documentation for more info (including licensing.)
+The in file documentation has a lot of information which may be useful for end
+users (particularly that near the beginning of the file).
 
 Because of the nature of the script, it is very difficult to test. I think I
-probably could write unit tests for all of it by extracting the subprocess
+probably could write unit tests for all of it by extracting the sub-process
 calls to their own objects then mocking them, but doing so might not be
 worthwhile. Anyways, until I get testing setup, the script is not going to be
 extensively tested. So bug reports will be very much appreciated. If I don't
-see the bug when running the script myself, then I am relient on you and other
+see the bug when running the script myself, then I am reliant on you and other
 users to report them to me, so please do.
+
+
+Downloads
+---------
+
+This script is hosted on github at:
+https://github.com/matcatc/ubuntu_updates_avail
+
+
+Contact
+-------
+
+Please feel free to contact me through github or using the contact information
+located there (https://github.com/matcatc/ubuntu_updates_avail)
+
 
 Matthew Todd
 Jan 15, 2010
+Mar 7, 2011
