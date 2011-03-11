@@ -14,34 +14,13 @@ Usually branches are in this order (<= ordering):
 
 
 tagging:
-    ? - after number tries for update and related code (no update, time to sleep between). Also include log options.
-
+    include following in next release:
+        no_root, exception_logging, time_format, max_width, documentation_update, network_check
+        The above should be enough.
 
 
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
-
-- option: no network check
-    I've noticed a failed ping several times when there was a network. Perhaps
-    it'd be better to use the number of tries for 'apt-get update', which is the
-    only thing requiring a network connection. Perhaps make the network check off
-    by default and add an option to enable, or remove it entirely.
-
----------------------- everything above this line is in testing ---------------------------------
-
-
-
-items to consider:
-no particular order
--------------------
-
-
-- option: --no-root
-    don't do anything requiring root
- 
-- option: max width of output
-    That way the output won't get too long and mess up conky
-    Should be easy, just use textwrap module
 
 - other time formats
     current time format is long and annoying
@@ -51,9 +30,50 @@ no particular order
             might require parsing the template and removing stuff
             perhaps could pass template through time printing function
 
-- no ping output to terminal
-    not high priority b/c only times users will see this is when debugging/ trying out for the first time
-        although first impressions are pretty important
+- option: max width of output
+    That way the output won't get too long and mess up conky
+    Should be easy, just use textwrap module
+
+- option: --no-root
+    don't do anything requiring root
+    If we use a decorator, then we can make it so that we can just add a decorator before any function that requires root access.
+ 
+---------------------- everything above this line is in testing ---------------------------------
+
+
+- documentation: fill in missing docstring info
+    I saw a couple missing @params and the like, just og through and add missing info before the next release.
+
+- doxygen: setup doxygen script to compile the doxygen documentation.
+    Since we have the doxygen docstring info setup, we should go ahead and
+    create the documentation. This way it'll be setup for those who are starting to
+    work on the project. Plus we never know when we might need/want it. Also allows
+    us to check that the outputted documentation is sane.
+
+items to consider:
+no particular order
+-------------------
+
+- permanently remove network_check
+
+- move source files into a source code directory?
+    Since we're using doxygen now, would be more convenient for it to have all and only the source in a specific directory. It'd be especially useful if we add anymore files (e.g: unittesting file.)
+
+- website (github)
+    A simple yet decent website would be nice. Right now its there just for the image.
+
+- write out to stdout
+    Allow for user to write out to stdout if they pass in '-' as the filename.
+    Is this desirable?
+        Would add complexity to the code. If someone really wanted to see it, they could alwasy run then call cat (e.g: ./ubuntu_updates_avail.py out.out && cat out.out)
+
+- better looking --help output
+    Not clear if we can actually change the formatting, at least in optparse.
+    Make sentences look better (capitalize first word, etc.)
+
+- option ordering / grouping
+    Should we start grouping options together (optparse allows for it.)
+    Ordering of options/groups relative to eachother?
 
 - KISS
     is the script becoming too complicated?
@@ -73,11 +93,14 @@ no particular order
         Ex: -u update
             -U no-update
 
-- option: server address
-    allow user to specify the server to ping in order to verify network connectivity
+- no ping output to terminal
+    not high priority b/c only times users will see this is when debugging/ trying out for the first time
+        although first impressions are pretty important
+    If we're planning on dropping network check, then we shouldn't spend time on this.
 
-- better looking --help output
-    Not clear if we can actually change the formatting, at least in optparse.
+- option: server address
+    allow user to specify the server to ping in order to verify network connectivity.
+    If we're planning on dropping network check, then we shouldn't spend time on this.
 
 - argparse module.
     The new python release comes with the module argparse which is intended as a replacement for optparse. Look into whether this is any better for our uses.
