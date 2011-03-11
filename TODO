@@ -21,28 +21,6 @@ tagging:
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
-- option: number of tries for apt-get update
-    -c (from ping)
-
-    I've noticed that apt-get update has been failing a lot recently b/c of dns
-    issues. So if we add a number of tries (default 1) then it will keep trying to
-    update until it suceedes or until the number is reached.
-
-- option: --no-update
-    don't update
-    b/c:
-        system may already be
-        reduces runtime
-        script may not be smart enough (e.g: local mirror and no internet, script may terminate early b/c in a normal setup the computer wouldn't be able to update)
-        may be running regularly to debug, and don't want it updating a lot
-    may be able to combine this with 'number of tries for apt-get update' by setting the number to 0.
-
-- option: time to sleep between update tries
-    If update regularly fails based on clock time, then this might be useful (as when we try again the system is in another state.) If update just randomly fails, with no regards to time, then this won't increase the chances of success. Regardless, this will prevent update from being called a bunch of times in a row, so if an user wanted to spread them out (even in terms of seconds) so as to prevent spamming, its possible.
-    Note that we should make negative numbers just default to 0.
-
-- log options
-
 - option: no network check
     I've noticed a failed ping several times when there was a network. Perhaps
     it'd be better to use the number of tries for 'apt-get update', which is the
