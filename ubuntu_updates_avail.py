@@ -294,6 +294,10 @@ def program_options():
                         action="store", type="string", default=None,
                         help=template_help)
 
+    parser.add_option("--time_format", dest="time_format",
+                        action="store", type="string", default='%c',
+                        help='''Define the format of the time placeholder to be used in the template.''')
+
     parser.add_option("--no_error_output", dest="no_error_output",
                         action="store_true", default=False,
                         help='''Do not update output file with errors. If
@@ -636,13 +640,17 @@ def generate_output(template, template_dict):
     except KeyError as e:
         raise GenerateOutputError('unknown identifier/placeholder: %s' % e)
 
-def create_template_dict(match_obj):
+def create_template_dict(match_obj, time_format):
     '''
     Create the template dict to be used to substitute in real values.
 
-    @param match_obj the regex match object from "sudo apt-get upgrade ...". Contains the data to use
-        to fill the dict.
-    @return dictionary with the template placeholder's as keys and their apporopriate values (from match_obj)
+    @param match_obj the regex match object from "sudo apt-get upgrade ...".
+        Contains the data to use to fill the dict.
+    @param template_dict a format string to be used in formatting the time
+        placeholder. Should be of the format as described by the Python spec
+        (probably same or very similar to C spec as well.)
+    @return dictionary with the template placeholder's as keys and their
+        apporopriate values (from match_obj)
     @date Feb 11, 2011
     @author Matthew Todd
     '''
@@ -650,7 +658,7 @@ def create_template_dict(match_obj):
     install = match_obj.group(2)
     remove = match_obj.group(3)
     not_upgraded = match_obj.group(4)
-    cur_time = time.asctime()
+    cur_time = time.strftime(time_format)
     upgradable = str(int(upgrade) + int(not_upgraded))
 
     return { 'upgrade'      : upgrade,
@@ -685,7 +693,7 @@ def main():
 
         match_obj = parse_upgrade_output(upgrade_output)
 
-        template_dict = create_template_dict(match_obj)
+        template_dict = create_template_dict(match_obj, options.time_format)
 
         template = get_template(options.template_file, options.base_dir)
 
