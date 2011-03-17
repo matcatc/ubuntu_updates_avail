@@ -310,7 +310,11 @@ def program_options():
     parser.add_option("--no_update", dest="num_update_checks",
                         action="store_const", const=0,
                         help=no_update_help)
-    
+
+    parser.add_option("--no_root", dest="no_root",
+                        action="store_true", default=False,
+                        help='''Disable all operations requiring root priveleges.''')
+
     parser.add_option("--network_check", dest="network_check",
                         action="store_true", default=False,
                         help='''Enable network checking. Will verify network's
@@ -436,6 +440,46 @@ log = logging.getLogger(__name__)
 
 log.info("options = %r, args = %r" % (options, args))           # never know when we might need this info
 
+
+###
+#### decorators
+###
+
+def option_no_root(f):
+    '''
+    Decorator that handles no root option stuff.
+
+    If no_root it set, then we're not going to use the decorated function.
+    Instead we'll log that its not being run due to insufficient privileges and
+    return None. If no_root is not set, then we'll just run f normally.
+
+    This way we only check no_root once, during decoration. So we can call a
+    decorated function many times without having to waste time checking. Also,
+    its much easier to add the no_root check to functions as we just decorate
+    them.
+
+    Uses options.no_root
+
+    @note
+    This decorator will prevent the entire function from running based on
+    the value of no_root. This requires that everything in the function
+    shouldn't run if it is set. Therefore functions decorated with this
+    decorator should be sufficiently small/precise as to only contain that
+    which requires root privileges and its immediately related code.
+
+    @param f function to decorate
+    @date Mar 23, 2011
+    @author Matthew Todd
+    '''
+    if options.no_root:
+        def g(*args):
+            log.info("not running '%s' b/c of insufficient privileges (no_root)." % f.__name__)
+            return None
+        return g
+
+    else:
+        return f
+
 ###
 #### helper functions
 ###
@@ -490,6 +534,7 @@ def check_network(server_address = DEFAULT_SERVER_ADDRESS):
     if ret_code > 0:
         raise NoNetworkError("ping failed with return code: %d" % ret_code)
 
+@option_no_root
 def call_update(num_update_checks, sleep_period):
     '''
     Calls apt-get update.

@@ -48,7 +48,12 @@ Notes
 
 See the --help output for a list of command line options.
 
-Note that it requires root privileges to call apt-get update.
+This program requires root privileges in order to call apt-get update. If you
+don't want to give root access, you could instead update on your own and then
+call this program with --no-root. An (approximate) example crontab for this:
+    @hourly apt-get update                                      # root's crontab
+    @5 * * * * user ubuntu_updates_avail.py --no-root out.out   # your crontab
+Thus this program doesn't use root but still has access to the updated information.
 
 The in file documentation has a lot of information which may be useful for end
 users (particularly that near the beginning of the file).
