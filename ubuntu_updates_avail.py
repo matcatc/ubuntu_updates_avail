@@ -652,12 +652,12 @@ def main():
         return NO_ERROR
 
     except CustomException as e:
-        log.error(e)
+        log.exception(e)
         write_msg(out_file, ERROR_MSGS[e.key], is_error=True)
         return ERROR_CODES[e.key]
 
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         write_msg(out_file, ERROR_MSGS['default'], is_error=True)
         return ERROR_CODES['default']
 
