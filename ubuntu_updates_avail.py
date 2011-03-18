@@ -298,6 +298,10 @@ def program_options():
                         action="store", type="string", default='%c',
                         help='''Define the format of the time placeholder to be used in the template.''')
 
+    parser.add_option("--max_width", dest="max_width",
+                        action="store", type="int", default=0,
+                        help='''max width of the output.''')
+
     parser.add_option("--no_error_output", dest="no_error_output",
                         action="store_true", default=False,
                         help='''Do not update output file with errors. If
@@ -625,10 +629,12 @@ def parse_upgrade_output(upgrade_output):
 
     return match_obj
 
-def generate_output(template, template_dict):
+def generate_output(template, template_dict, max_width):
     '''
     Generates the output from the given template and its dict.
 
+    @param max_width Maximum width of all lines in the output. Values <= 0 are
+        ignored, so python's default will be used instead.
     @throws GenerateOutputError
     @return the output string
     @date Feb 12, 2011
@@ -636,7 +642,11 @@ def generate_output(template, template_dict):
     '''
     try:
         out_template = get_template(options.template_file, options.base_dir)
-        return out_template.format(**template_dict)
+
+        if max_width > 0:
+            return textwrap.fill(out_template.format(**template_dict), width=max_width)
+        else:
+            return out_template.format(**template_dict)
     except KeyError as e:
         raise GenerateOutputError('unknown identifier/placeholder: %s' % e)
 
@@ -697,7 +707,7 @@ def main():
 
         template = get_template(options.template_file, options.base_dir)
 
-        output = generate_output(template, template_dict)
+        output = generate_output(template, template_dict, options.max_width)
 
         write_msg(out_file, output, is_error=False)
 
