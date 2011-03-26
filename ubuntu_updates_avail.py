@@ -147,9 +147,7 @@ class NoNetworkError(CustomException):
         '''
         @param error the error indicating the network is unavailable
         '''
-        self.error = error
-
-        self.key = self.__class__.__name__
+        super().__init__(error)
 
     def __str__(self):
         return "No network available: %s" % self.error
@@ -165,9 +163,7 @@ class UpdateError(CustomException):
         '''
         @param error the exception that was thrown when we tried to run update
         '''
-        self.error = error
-
-        self.key = self.__class__.__name__
+        super().__init__(error)
 
     def __str__(self):
         return "Call to apt-get update failed: %s" % self.error
@@ -183,9 +179,7 @@ class UpgradeSimulError(CustomException):
         '''
         @param error the exception raised when we tried to run the simulated upgrade
         '''
-        self.error = error
-
-        self.key = self.__class__.__name__
+        super().__init__(error)
 
     def __str__(self):
         return "Upgrade simulation failed: %s" % e
@@ -201,9 +195,7 @@ class UpgradeOutputParseError(CustomException):
         '''
         @param error the reason that we failed
         '''
-        self.error = error
-
-        self.key = self.__class__.__name__
+        super().__init__(error)
 
     def __str__(self):
         return "Upgrade output parseing failed: %s" % e
@@ -219,10 +211,7 @@ class GenerateOutputError(CustomException):
         '''
         @param error the reason that we failed
         '''
-        self.error = error
-
-        self.key = self.__class__.__name__
-
+        super().__init__(error)
 
     def __str__(self):
         return "Generation of output failed: %s" % e
