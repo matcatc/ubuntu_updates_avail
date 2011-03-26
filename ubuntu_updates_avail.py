@@ -1,36 +1,45 @@
 #!/usr/bin/python3
 '''
-Check whether there are updates available for Ubuntu (using apt-get).
+@mainpage
+@section Welcome Welcome to Ubuntu Updates Avail developer documentation.
+@par
+These pages contain the little information I have bothered to write down
+regarding the programmaing details. Note that although this is very much geared
+towards developers, it could contain information that would be useful to
+end-users.
 
-Will update a file (ubuntu_updates_avail.info) with the information so conky
-can read it.
+@section Program The Program in Brief
+@par
+I wrote this program to display update information in my conky script.  The
+program checks whether there are updates available using apt-get and output to
+a file.
 
-You can run the script directly from conky, with some modifications (print out
-instead of writing to file.) This isn't recommended because the script will
-take long enough that conky will freeze for a couple of seconds. Also note that
-your conky will then require root access. But if you run this via cron and out_file,
-only this will get root access.
 
-@note
-b/c script is calling apt-get, it requires root access, via sudo. Its
-possible to remove the need for sudo by removing the call to 'apt-get update',
-but then you'd have to rely on the os to update the local package information
-on its own (which it probably already does.)
+@section Requirements
+- python 3
+- apt-get
 
-@note
-see --help output (or look in the code below) to see what command line
-options are available.
+@section Documenation Building Documentation
+@par
+Run build_documentation.sh. It will build all the documentation in the doc
+subdirectory. In order to get doxygen working better with python, I added the
+following to my Doxyfile (included in the repository):
 
-@note
-Because of the nature of the script, it is very difficult to test. I think I
-probably could write unit tests for all of it by extracting the subprocess
-calls to their own objects then mocking them, but doing so might not be
-worthwhile. Anyways, until I get testing setup, the script is not going to be
-extensively tested. So bug reports will be very much appreciated. If I don't
-see the bug when running the script myself, then I am relient on you and other
-users to report them to me, so please do.
+@code
+INPUT_FILTER = “python /path/to/doxypy.py”
+@endcode
 
-@license
+Where doxypy.py is from: http://code.foosel.org/doxypy
+
+You can remove the INPUT_FILTER line if you want to keep from having to
+download and setup doxypy. The output might not be as pretty, though.
+
+@section Links
+ - Homepage: http://matcatc.github.com/ubuntu_updates_avail/
+ - Github: https://github.com/matcatc/ubuntu_updates_avail
+
+@section License
+@verbatim
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -43,8 +52,25 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+@endverbatim
 
 @date Jan 15, 2011
+@author Matthew Todd
+
+@page Testing
+@section Testing
+@par
+Because of the nature of the script, it is very difficult to test. I could
+write unit tests for all of it by extracting the subprocess calls to their own
+objects then mocking them, but doing so might not be worthwhile.
+
+@par
+Anyways, until I get testing setup, the script is not going to be extensively
+tested, so bug reports will be very much appreciated. If I don't see the bug
+when running the script myself, then I am relient on you and other users to
+report them to me, so please do.
+
+@date Apr 17, 2011
 @author Matthew Todd
 '''
 
@@ -107,11 +133,16 @@ class CustomException(Exception):
 
     TODO: better name
 
+    So that we can catch this custom exception type and handle all of our exceptions dynamically.
+
     @date Feb 13, 2011
     @author Matthew Todd
     '''
     def __init__(self, error):
         '''
+        self.key is the key used to index into the exception related
+        dictionaries to get their info (return code, etc.)
+
         @param error the error giving more details as to the exception
         '''
         self.error = error
@@ -333,6 +364,8 @@ def compute_out_file(base_dir, filename):
     '''
     Computes the file out_file path/filename.
 
+    @param base_dir String The directory from which to base the out file.
+    @param filename String the name of the out file. Can contain path information as well.
     @date Feb 11, 2011
     @author Matthew Todd
     '''
@@ -342,6 +375,8 @@ def get_template(template_file, base_dir):
     '''
     Gets the template from the file. If no file, then uses default.
 
+    @param template_file String filename of the template file. Can contain path information.
+    @param base_dir String directory to base the file off of.
     @date Feb 11, 2011
     @author Matthew Todd
     '''
@@ -422,6 +457,12 @@ def compute_log_dir(log_dir, base_dir):
 
     Chooses between log_dir and base_dir. If log_dir isn't None, then its log_dir.
 
+    @note We have this function to determine whether we're using a special
+    directory for logging and to use it if so. We might want to log to a common
+    directory (e.g: /var/log or similar).
+
+    @param log_dir String directory from which to base the log file. Can be None to indicate to use the default (base_dir).
+    @param base_dir String directory from which most/all of the files are based. The default for logging.
     @date Feb 11, 2011
     @author Matthew Todd
     '''
@@ -446,9 +487,9 @@ def option_no_root(f):
     '''
     Decorator that handles no root option stuff.
 
-    If no_root it set, then we're not going to use the decorated function.
-    Instead we'll log that its not being run due to insufficient privileges and
-    return None. If no_root is not set, then we'll just run f normally.
+    If no_root it set, then we're not going to use f(). Instead we'll log that
+    its not being run due to insufficient privileges and return None. If
+    no_root is not set, then we'll just run f normally.
 
     This way we only check no_root once, during decoration. So we can call a
     decorated function many times without having to waste time checking. Also,
@@ -489,10 +530,17 @@ def write_msg(filename, msg, is_error):
     want to write out multiple pieces of data, combine them into one string and
     then write it out using this function.
 
-    @param filename filename of the output file.
-    @param msg the message to write out to the output file. This is what will
+    Although this may be inconvenient, as we'll have to create the full output
+    before writing, this way we can ensure that output is only outputted if its
+    supposed to be (no_error_output option). Anyways, as this program stands,
+    there is only really the need to write to file once. Plus normally
+    everything is buffered so it'll end up writing all at once to disk in the
+    end.
+
+    @param filename String filename of the output file.
+    @param msg String the message to write out to the output file. This is what will
         be displayed to the user.
-    @param is_error whether the output is an error msg. This allows us to shut
+    @param is_error Boolean whether the output is an error msg. This allows us to shut
         off error messages to the output file, should we so desire.
     @date Jan 17, 2011
     @author Matthew Todd
@@ -515,7 +563,12 @@ def check_network(server_address = DEFAULT_SERVER_ADDRESS):
     @note Hasn't been tested extensively due to the fact that its hard to
     similate most condtions.
 
-    @param server_address the ubuntu server to check. Defaults to the main us server.
+    @note I'm considering removing this function b/c its not very effective.
+    Its given me several false positives and doesn't offer more than multiple
+    update checks. Please give me feedback if you have any ideas as how to make
+    it more effective or if you want me to keep it.
+
+    @param server_address String the ubuntu server to check. Defaults to the main us server.
     @throws NoNetworkError
     @return None
     @date Jan 27, 2011
@@ -538,8 +591,8 @@ def call_update(num_update_checks, sleep_period):
 
     Raises an exception if the update failed.
 
-    @param num_update_checks The number of times to try updating. Negative numbers are equivalent to 0.
-    @param sleep_period How long to sleep between update tries. Negative numbers are equivalent to 0.
+    @param num_update_checks Int The number of times to try updating. Negative numbers are equivalent to 0.
+    @param sleep_period Int How long to sleep between update tries. Numbers <= 0 means no sleeping.
     @throws UpdateFailedError
     @return None
     @date Feb 12, 2011
@@ -603,9 +656,13 @@ def parse_upgrade_output(upgrade_output):
     '''
     Parse/screen scrape the output of the simulated upgrade.
 
-    Uses regex, hence the return type.
+    Uses regex, hence the return type. Would like to return something that is
+    independent of implementation. But there is no reason to add extra code
+    complexity when we don't need it, so I'm going to leave this be for the
+    moment.
 
     @throws UpgradeOutputParseError
+    @param upgrade_output String the output from the simulated (or actual) apt-get upgrade.
     @returns a regex-match-object
     @date Feb 12, 2011
     @author Matthew Todd
@@ -625,6 +682,10 @@ def generate_output(template, template_dict, max_width):
     @param max_width Maximum width of all lines in the output. Values <= 0 are
         ignored, so python's default will be used instead.
     @throws GenerateOutputError
+    @param template String the output template with placeholders (or not) to replace
+    with their proper values.
+    @param template_dict Dictionary Dictionary of template-placeholder value to use with
+    formatting the template.
     @return the output string
     @date Feb 12, 2011
     @author Matthew Todd
@@ -650,6 +711,9 @@ def create_template_dict(match_obj, time_format):
         (probably same or very similar to C spec as well.)
     @return dictionary with the template placeholder's as keys and their
         apporopriate values (from match_obj)
+    @param match_obj regex-match-obj the regex match object from "sudo apt-get upgrade ...". Contains the data to use
+        to fill the dict.
+    @return dictionary with the template placeholder's as keys and their apporopriate values (from match_obj)
     @date Feb 11, 2011
     @author Matthew Todd
     '''
@@ -674,7 +738,13 @@ def main():
     '''
     Main function.
 
-    returns the exit code.
+    Has a default catch all except clause which logs the exception. Normally
+    catch-alls are undesired b/c it may hide/obscure problems, but b/c this
+    program is likely to be run as a cron job, we need a way to catch
+    exceptions/errors/etc for later debugging/assesing/etc.
+
+    @return The exit code. The meaning of the exit code is store above near the
+    top of the file in the ERROR_CODES dictionary.
 
     @date Feb 11, 2011
     @author Matthew Todd

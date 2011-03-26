@@ -24,7 +24,11 @@ echo "building doxygen documentation"
 cd doc
 doxygen Doxyfile
 
-#echo "building docbook documentation"
-#cd docbook
-#rm *.html
-#xmlto html -m config.xsl manual.dbk
+echo
+echo
+
+echo "building docbook documentation"
+cd docbook
+echo "removing old html files"
+rm *.html
+xmlto html -m config.xsl manual.dbk
