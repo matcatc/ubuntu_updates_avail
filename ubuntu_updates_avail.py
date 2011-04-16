@@ -645,7 +645,7 @@ def create_template_dict(match_obj, time_format):
 
     @param match_obj the regex match object from "sudo apt-get upgrade ...".
         Contains the data to use to fill the dict.
-    @param template_dict a format string to be used in formatting the time
+    @param time_format a format string to be used in formatting the time
         placeholder. Should be of the format as described by the Python spec
         (probably same or very similar to C spec as well.)
     @return dictionary with the template placeholder's as keys and their

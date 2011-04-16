@@ -35,6 +35,19 @@ Installation
     `${execi 900 cat ~/.conky/ubuntu_updates_avail.info}`
 
 
+Building Documentation
+----------------------
+Run build_documentation.sh. It will build all the documentation in the doc subdirectory.
+
+In order to get doxygen working better with python, I added the following to my Doxyfile:
+
+INPUT_FILTER = “python /path/to/doxypy.py”
+
+Where doxypy.py is from: http://code.foosel.org/doxypy
+
+You can remove the INPUT_FILTER line if you want to keep from having to download and setup doxypy. The output might not be as pretty, though.
+
+
 Licensing
 ---------
 
