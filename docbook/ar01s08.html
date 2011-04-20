@@ -1,4 +1,4 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Misc Notes</title><link rel="stylesheet" href="docbook.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Ubuntu Updates Avail"><link rel="up" href="index.html" title="Ubuntu Updates Avail"><link rel="prev" href="ar01s07.html" title="Licensing"><link rel="next" href="ar01s09.html" title="Links"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Misc Notes </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr></table><hr></div><div class="section" title="Misc Notes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2568066"></a> Misc Notes </h2></div></div></div><div class="section" title="Root Priveleges"><div class="titlepage"><div><div><h3 class="title"><a name="id2557498"></a> Root Priveleges </h3></div></div></div><p>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Misc Notes</title><link rel="stylesheet" href="docbook.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Ubuntu Updates Avail"><link rel="up" href="index.html" title="Ubuntu Updates Avail"><link rel="prev" href="ar01s07.html" title="Licensing"><link rel="next" href="ar01s09.html" title="Links"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Misc Notes </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr></table><hr></div><div class="section" title="Misc Notes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2863255"></a> Misc Notes </h2></div></div></div><div class="section" title="Root Priveleges"><div class="titlepage"><div><div><h3 class="title"><a name="id2880683"></a> Root Priveleges </h3></div></div></div><p>
                     This program requires root privileges in order to call <span class="application">apt-get update</span>. If you
                     don't want to give root access, you could instead update on your own and then
                     call this program with <code class="option">--no-root</code>. An (approximate) example crontab for this:
@@ -7,7 +7,7 @@
 @5 * * * * user ubuntu_updates_avail.py --no-root out.out   # your crontab
                     </pre><p>
                     Thus this program doesn't use root but still has access to the updated information.
-                </p></div><div class="section" title="Testing"><div class="titlepage"><div><div><h3 class="title"><a name="id2587028"></a>Testing</h3></div></div></div><p>
+                </p></div><div class="section" title="Testing"><div class="titlepage"><div><div><h3 class="title"><a name="id2876207"></a>Testing</h3></div></div></div><p>
                     Because of the nature of the script, it is very difficult
                     to test. I think I probably could write unit tests for all
                     of it by extracting the sub-process calls to their own
@@ -19,7 +19,7 @@
                     appreciated. If I don't see the bug when running the script
                     myself, then I am reliant on you and other users to report
                     them to me, so please do.
-                </p></div><div class="section" title="Network Check"><div class="titlepage"><div><div><h3 class="title"><a name="id2568577"></a> Network Check </h3></div></div></div><p>
+                </p></div><div class="section" title="Network Check"><div class="titlepage"><div><div><h3 class="title"><a name="id2857756"></a> Network Check </h3></div></div></div><p>
                     I'm currently considering dropping the network checking
                     ability altogether. It never really worked well (too many
                     false positives) and I feel that trying update several
@@ -29,7 +29,7 @@
                     else) which you'd like to share. If I don't get any
                     feedback, I'll probably end up removing it to reduce code
                     complexity.
-                </p></div><div class="section" title="Running from conky"><div class="titlepage"><div><div><h3 class="title"><a name="id2560369"></a> Running from conky </h3></div></div></div><p>
+                </p></div><div class="section" title="Running from conky"><div class="titlepage"><div><div><h3 class="title"><a name="id2849549"></a> Running from conky </h3></div></div></div><p>
                     You can run the script directly from conky, with some
                     modifications (print out instead of writing to file.) This
                     isn't recommended because the script will take long enough
