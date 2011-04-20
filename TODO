@@ -9,63 +9,49 @@ curr_running: what's currently running on my system (for testing purposes.)
 todo: branch to contain this file (TODO).  Not going to be rebased to clean up history so that others can see what I was thinking when working on particular features.
 changelog: branch to contain the changelog file. Each commit should correspond to an associted tag/release (unless we're trying to fix a mistake in the changelog and we already pushed it).
 
-Usually branches are in this order (<= ordering):
+Usually branches are in this order (upstream - downstream):
     origin/master - master - curr_running - develop - topical
 
 
 tagging:
     include following in next release:
-        no_root, exception_logging, time_format, max_width, documentation_update, network_check
-        The above should be enough.
+        documentation updates (minor release)
 
 
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
-- other time formats
-    current time format is long and annoying
-    perhaps a way for the user to specify
-        command line option
-        in template
-            might require parsing the template and removing stuff
-            perhaps could pass template through time printing function
+- finish docbook documentation
 
-- option: max width of output
-    That way the output won't get too long and mess up conky
-    Should be easy, just use textwrap module
-
-- option: --no-root
-    don't do anything requiring root
-    If we use a decorator, then we can make it so that we can just add a decorator before any function that requires root access.
+- spellcheck docbook documentation
  
+- add information to README regarding gh-pages pushing automation
+
+
 ---------------------- everything above this line is in testing ---------------------------------
 
-
-- documentation: fill in missing docstring info
-    I saw a couple missing @params and the like, just og through and add missing info before the next release.
-
-- doxygen: setup doxygen script to compile the doxygen documentation.
-    Since we have the doxygen docstring info setup, we should go ahead and
-    create the documentation. This way it'll be setup for those who are starting to
-    work on the project. Plus we never know when we might need/want it. Also allows
-    us to check that the outputted documentation is sane.
 
 items to consider:
 no particular order
 -------------------
 
 - permanently remove network_check
+- no ping output to terminal
+    not high priority b/c only times users will see this is when debugging/ trying out for the first time
+        although first impressions are pretty important
+    If we're planning on dropping network check, then we shouldn't spend time on this.
+- option: server address
+    allow user to specify the server to ping in order to verify network connectivity.
+    If we're planning on dropping network check, then we shouldn't spend time on this.
 
 - move source files into a source code directory?
     Since we're using doxygen now, would be more convenient for it to have all and only the source in a specific directory. It'd be especially useful if we add anymore files (e.g: unittesting file.)
-
-- website (github)
-    A simple yet decent website would be nice. Right now its there just for the image.
 
 - write out to stdout
     Allow for user to write out to stdout if they pass in '-' as the filename.
     Is this desirable?
         Would add complexity to the code. If someone really wanted to see it, they could alwasy run then call cat (e.g: ./ubuntu_updates_avail.py out.out && cat out.out)
+        Would be especially useful for wmii. Simply write a script that calls ubuntu_updates_avail and pipes the output to `wmiir write /rbar/updates_avail`. Could still use cat, but that would require another file.
 
 - better looking --help output
     Not clear if we can actually change the formatting, at least in optparse.
@@ -93,22 +79,9 @@ no particular order
         Ex: -u update
             -U no-update
 
-- no ping output to terminal
-    not high priority b/c only times users will see this is when debugging/ trying out for the first time
-        although first impressions are pretty important
-    If we're planning on dropping network check, then we shouldn't spend time on this.
-
-- option: server address
-    allow user to specify the server to ping in order to verify network connectivity.
-    If we're planning on dropping network check, then we shouldn't spend time on this.
-
 - argparse module.
     The new python release comes with the module argparse which is intended as a replacement for optparse. Look into whether this is any better for our uses.
-    Also, make sure that we don't switch to argparse too early, we still want to be backward compatible with 3.1.2 for a little while (until 3.2 is released for ubuntu)
-
-- add docs (docbook) ?
-    the script has certainly gotten large enough that a manpage may be desired
-    or perhaps just update the README?
+    Also, make sure that we don't switch to argparse too early, we still want to be backward compatible with 3.1.2 for a little while (say until 3.2 is released for ubuntu)
 
 - change default output to something more sensible.
 
@@ -120,6 +93,7 @@ no particular order
         how much is acceptable?
         separate file?
             command line option?
+    is it worth it to actually add testing?
 
 - version number
     we'll want a way to specify this easily
