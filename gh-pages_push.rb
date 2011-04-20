@@ -19,10 +19,9 @@ grancher = Grancher.new do |g|
 end
 
 puts "Commiting"
-
 grancher.commit
 
-# TODO: push once we're sure its working correctly
-#puts "Pushing"
-#grancher.push
+# should be able to Ctrl-c in emergency if push is undesired
+puts "Pushing"
+grancher.push
 
