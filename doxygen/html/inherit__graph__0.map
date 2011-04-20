@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classubuntu__updates__avail_1_1_custom_exception.html" title="Base class for our custom exceptions." alt="" coords="7,112,284,141"/>
+<area shape="rect" id="node3" href="$classubuntu__updates__avail_1_1_generate_output_error.html" title="Error for when we were unable to generate the output." alt="" coords="348,5,649,35"/>
+<area shape="rect" id="node5" href="$classubuntu__updates__avail_1_1_no_network_error.html" title="Error when there is no network connection." alt="" coords="365,59,632,88"/>
+<area shape="rect" id="node7" href="$classubuntu__updates__avail_1_1_update_error.html" title="Error when the call to apt&#45;get update failed." alt="" coords="377,112,620,141"/>
+<area shape="rect" id="node9" href="$classubuntu__updates__avail_1_1_upgrade_output_parse_error.html" title="Error for when the upgrade output parsing failed." alt="" coords="333,165,664,195"/>
+<area shape="rect" id="node11" href="$classubuntu__updates__avail_1_1_upgrade_simul_error.html" title="Error for when the upgrade simulation failed." alt="" coords="355,219,643,248"/>
+</map>

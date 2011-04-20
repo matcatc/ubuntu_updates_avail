@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="docbook.css" type="text/css"?>
+
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.docbook.org/xml/4.5/docbookx.dtd">
+
+<article>
+	<title>Ubuntu Updates Avail</title>
+
+	<articleinfo>
+	  <author><firstname>Matthew</firstname><surname>Todd</surname></author>
+	  <authorinitials>Mat</authorinitials>
+	  <title>Ubuntu Updates Avail</title>
+	</articleinfo>
+
+
+        <section>
+            <title> Introduction </title>
+            <para>
+                This is a simple script that I wrote in order to display update info in my conky.
+            </para>
+            <section>
+                <title>Naming</title>
+                <para> Because this script will work with any computer that has
+                    apt-get installed on it, I want to come up with a name that
+                    does a better job of indicating this. I.e: I don't want the
+                    name to make it seem like it only works with Ubuntu.
+                </para>
+            </section>
+        </section>
+
+        <section>
+            <title> Screenshots </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="images/conky.png" format="PNG" />
+                </imageobject>
+            </mediaobject>
+<!--TODO: more screenshots -->
+        </section>
+
+        <section>
+            <title> Requirements </title>
+            <simplelist>
+                <member> python 3 </member>
+                <member> apt-get </member>
+            </simplelist>
+        </section>
+        
+        <section>
+            <title> Installation </title>
+            <orderedlist>
+                <listitem><para> Just drop ubuntu_updates_avail.py in a directory somewhere (e.g; ~/.conky). </para></listitem>
+                <listitem>
+                    <para> If you want it to be run on a cron job (which is
+                        what most people will want), then add a line to the crontab
+                        ([sudo] crontab -e).  If you're going to have the script
+                        call update (which is default behavior), then it'll need
+                        root access, and thus should be put in the root's crontab.
+                        <example>
+                            <title> Excerpt from my root crontab </title>
+                            <screen>
+@hourly /home/user_name/.conky/ubuntu_updates_avail.py --base_dir /home/user_name/.conky/ --template template --num_update_checks 3 ubuntu_updates_avail.info
+                            </screen>
+                        </example>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para> Add a line to your conky script to read in the generated file:
+                        <informalexample><screen>
+${execi 900 cat ~/.conky/ubuntu_updates_avail.info}
+                        </screen></informalexample>
+                    </para>
+                </listitem>
+            </orderedlist>
+        </section>
+
+        <section>
+            <title> Program Options </title>
+            <note><para>I've noticed in the past that it can be really hard to keep this section up-to-date, so bear that in mind.</para></note>
+            <para> TODO </para>
+<!-- TODO -->
+        </section>
+
+        <section>
+            <title> Building Documentation </title>
+            <para> Run build_documentation.sh. It will build all the
+                documentation in the doc subdirectory. In order to get doxygen
+                working better with python, I added the following to my Doxyfile:
+                <screen>
+INPUT_FILTER = “python /path/to/doxypy.py”
+                </screen>
+                Where doxypy.py is from: <ulink url="http://code.foosel.org/doxypy">http://code.foosel.org/doxypy</ulink>.
+                You can remove the INPUT_FILTER line if you want to keep from
+                having to download and setup doxypy. The output might not be as
+                pretty, though.
+            </para>
+        </section>
+
+        <section>
+            <title> Licensing </title>
+            <para> This program is licensed under the GPL v.3.0 </para>
+            <blockquote><screen>
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <ulink url="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</ulink>
+            </screen></blockquote>
+            <note><para>
+                While I haven't given officially given this documentation a
+                particular license, You can consider it to be under the same
+                license(s) as the actual code.
+            </para></note>
+        </section>
+
+        <section>
+            <title> Misc Notes </title>
+
+            <section>
+                <title> Root Priveleges </title>
+                <para>
+                    This program requires root privileges in order to call <application>apt-get update</application>. If you
+                    don't want to give root access, you could instead update on your own and then
+                    call this program with <option>--no-root</option>. An (approximate) example crontab for this:
+                    <screen>
+@hourly apt-get update                                      # root's crontab
+@5 * * * * user ubuntu_updates_avail.py --no-root out.out   # your crontab
+                    </screen>
+                    Thus this program doesn't use root but still has access to the updated information.
+                </para>
+            </section>
+
+            <section>
+                <title>Testing</title>
+                <para>
+                    Because of the nature of the script, it is very difficult
+                    to test. I think I probably could write unit tests for all
+                    of it by extracting the sub-process calls to their own
+                    objects then mocking them, but doing so might not be
+                    worthwhile.
+                </para>
+                <para>
+                    Anyways, until I get testing setup, the script is not going
+                    to be extensively tested. So bug reports will be very much
+                    appreciated. If I don't see the bug when running the script
+                    myself, then I am reliant on you and other users to report
+                    them to me, so please do.
+                </para>
+            </section>
+
+            <section>
+                <title> Network Check </title>
+                <para>
+                    I'm currently considering dropping the network checking
+                    ability altogether. It never really worked well (too many
+                    false positives) and I feel that trying update several
+                    times works much better. But before I remove this feature,
+                    I'd like to get some user feedback. Please send me an email
+                    (see below) if you have an opinion on this (or anything
+                    else) which you'd like to share. If I don't get any
+                    feedback, I'll probably end up removing it to reduce code
+                    complexity.
+                </para>
+            </section>
+
+            <section>
+                <title> Running from conky </title>
+                <para>
+                    You can run the script directly from conky, with some
+                    modifications (print out instead of writing to file.) This
+                    isn't recommended because the script will take long enough
+                    that conky will freeze for a couple of seconds. Also note
+                    that your conky will then require root access. But if you
+                    run this via cron and out_file, conky will not need root
+                    access.
+                </para>
+            </section>
+        </section>
+
+
+        <section>
+            <title> Links </title>
+            <para>
+                <simplelist>
+                    <member>Website:
+                        <ulink url="http://matcatc.github.com/ubuntu_updates_avail/">
+                            http://matcatc.github.com/ubuntu_updates_avail/
+                        </ulink>
+                    </member>
+                    <member>Download/Clone:
+                        <ulink url="https://github.com/matcatc/ubuntu_updates_avail">
+                            https://github.com/matcatc/ubuntu_updates_avail
+                        </ulink>
+                    </member>
+                    <member>Developer Documentation:
+                        <ulink url="https://github.com/matcatc/ubuntu_updates_avail/devel">
+                            https://github.com/matcatc/ubuntu_updates_avail/devel
+                        </ulink>
+                    </member> 
+                </simplelist>
+            </para>
+        </section>
+
+
+        <section>
+            <title> Contact Information </title>
+            <para>
+                Please feel free to contact me via github.
+            </para>
+        </section>
+</article>
+
