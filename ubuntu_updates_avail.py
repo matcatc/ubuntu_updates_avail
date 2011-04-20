@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 '''
 @mainpage
-@section Welcome Welcome to Ubuntu Updates Avail developer documentation.
+@section Welcome
 @par
 These pages contain the little information I have bothered to write down
 regarding the programmaing details. Note that although this is very much geared
