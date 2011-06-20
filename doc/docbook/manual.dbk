@@ -78,7 +78,146 @@ ${execi 900 cat ~/.conky/ubuntu_updates_avail.info}
         <section>
             <title> Program Options </title>
             <note><para>I've noticed in the past that it can be really hard to keep this section up-to-date, so bear that in mind.</para></note>
-            <para> TODO </para>
+            <variablelist>
+                <varlistentry>
+                    <term><option>--help</option></term>
+                    <listitem><para>Display help information.</para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--version</option></term>
+                    <listitem><para>Displays version information.</para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--base_dir=&lt;BASE_DIR&gt;</option></term>
+                    <listitem><para>base directory of path for outputted files.
+                        Filenames will be relative to the provided base directory,
+                        or the current working directory if none is provided.
+                    </para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--log_file=&lt;LOG_FILE&gt;</option></term>
+                    <listitem><para>Name/path-name of generated log file. Will
+                        be relative to LOG_DIR if its provided, or relative to
+                        BASE_DIR if LOG_DIR isn't provided.
+                    </para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--log_dir=&lt;LOG_DIR&gt;</option></term>
+                    <listitem><para>Base directory for the log file.  This
+                            takes precedence over BASE_DIR for the log file.
+                            Provided so that the log file can be outputted in a
+                            special directory (e.g: put it in /var/log).
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--log_level</option></term>
+                    <listitem><para>The log level. Filters what is written to the log file.</para>
+                        <simplelist>
+                            <member>Critical/Fatal</member>
+                            <member>Error</member>
+                            <member>Warning</member>
+                            <member>Info</member>
+                            <member>Debug</member>
+                        </simplelist>
+                        <para>Lower levels include more information. Choosing a
+                            level outputs the information of that level and all
+                            above it.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--template</option></term>
+                    <listitem>
+                        <para>Specifies the template file relative to BASE_DIR.
+                            Template file acts as a template for the output. The
+                            template is a python string that will have format()
+                            called on it. Valid identifiers include:
+                        </para>
+                        <simplelist>
+                            <member>{upgrade}</member>
+                            <member>{install}</member>
+                            <member>{remove}</member>
+                            <member>{not_upgraded}</member>
+                            <member>{time}</member>
+                            <member>{upgradeable}</member>
+                        </simplelist>
+                        <para>The first 4 are taken from apt-get.
+                            time is current time (see --time_format).
+                            upgradeable is the sum of upgrade and not_upgraded,
+                            i.e: the number of packages that could be upgraded,
+                            which is what most will want to use.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--time_format=&lt;TIME_FORMAT&gt;</option></term>
+                    <listitem><para>Defines the format of the time placeholder
+                        {time} (see --template). Uses python time formatting
+                        syntax (which is similar if not the same as the c
+                        syntax.)
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--max_width=&lt;MAX_WIDTH&gt;</option></term>
+                    <listitem><para>Max width of the output.</para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--no_error_output</option></term>
+                    <listitem><para>If an error occurs, do not write the output file.</para></listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>-c / --num_update_checks =&lt;NUM_UPDATE_CHECKS&gt;</option></term>
+                    <listitem><para>Number of time to try updating (apt-get
+                        update). Useful in situations where apt-get update
+                        randomly fails every once in a while.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--sleep_period=&lt;SLEEP_PERIOD&gt;</option></term>
+                    <listitem><para>Time (in seconds) to sleep between update
+                            attempts. Useful when update fails are temporally
+                            localized. Values less than or equal to 0 mean no
+                            sleeping.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--no_update</option></term>
+                    <listitem><para>Don't update. Useful when your computer is
+                            already updating frequently enough. Also useful for
+                            debugging/testing. Conflicts with
+                            --num_update_checks. If both are used, then the
+                            behavior is undefined.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--no_root</option></term>
+                    <listitem><para>Don't do anything requiring root
+                            priveleges. Allows normal users to use this
+                            program. Things requiring root priveleges (e.g:
+                            updating) can be done in the root crontab.
+                        </para>
+                    </listitem>
+                </varlistentry>
+                <varlistentry>
+                    <term><option>--network_check</option></term>
+                    <listitem><para>Enable the network check, which tries to
+                            determine whether the network is up and available
+                            before trying to update. Rather inaccurate and not
+                            very useful now that we have --num_udpate_checks.
+                        </para>
+                        <note><para>
+                                I'm contemplating depreciating/removing this
+                                option as its not very effective.
+                            </para>
+                        </note>
+                    </listitem>
+                </varlistentry>
+            </variablelist>
 <!-- TODO -->
         </section>
 
