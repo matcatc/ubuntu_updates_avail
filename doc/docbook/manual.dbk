@@ -31,12 +31,35 @@
 
         <section>
             <title> Screenshots </title>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="images/conky.png" format="PNG" />
-                </imageobject>
-            </mediaobject>
-<!--TODO: more screenshots -->
+            <screenshot>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="images/conky.png" format="PNG" />
+                    </imageobject>
+                </mediaobject>
+            </screenshot>
+            <para>
+                <screen>
+upgrade         {upgrade}
+install         {install}
+remove          {remove}
+not_upgraded    {not_upgraded}
+                </screen>
+            </para>
+ 
+            <screenshot>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="images/conky2.png" format="PNG" />
+                    </imageobject>
+                </mediaobject>
+            </screenshot>
+            <para>
+                <screen>
+{upgradeable} upgradeable
+    ({time})
+                </screen>
+            </para>
         </section>
 
         <section>
@@ -218,7 +241,6 @@ ${execi 900 cat ~/.conky/ubuntu_updates_avail.info}
                     </listitem>
                 </varlistentry>
             </variablelist>
-<!-- TODO -->
         </section>
 
         <section>
