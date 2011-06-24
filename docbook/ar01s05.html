@@ -1,1 +1,50 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Program Options</title><link rel="stylesheet" href="docbook.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Ubuntu Updates Avail"><link rel="up" href="index.html" title="Ubuntu Updates Avail"><link rel="prev" href="ar01s04.html" title="Installation"><link rel="next" href="ar01s06.html" title="Building Documentation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Program Options </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr></table><hr></div><div class="section" title="Program Options"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2690577"></a> Program Options </h2></div></div></div><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>I've noticed in the past that it can be really hard to keep this section up-to-date, so bear that in mind.</p></div><p> TODO </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> Installation  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">  Building Documentation </td></tr></table></div></body></html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Program Options</title><link rel="stylesheet" href="docbook.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Ubuntu Updates Avail"><link rel="up" href="index.html" title="Ubuntu Updates Avail"><link rel="prev" href="ar01s04.html" title="Installation"><link rel="next" href="ar01s06.html" title="Building Documentation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Program Options </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr></table><hr></div><div class="section" title="Program Options"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id3065255"></a> Program Options </h2></div></div></div><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>I've noticed in the past that it can be really hard to keep this section up-to-date, so bear that in mind.</p></div><div class="variablelist"><dl><dt><span class="term"><code class="option">--help</code></span></dt><dd><p>Display help information.</p></dd><dt><span class="term"><code class="option">--version</code></span></dt><dd><p>Displays version information.</p></dd><dt><span class="term"><code class="option">--base_dir=&lt;BASE_DIR&gt;</code></span></dt><dd><p>base directory of path for outputted files.
+                        Filenames will be relative to the provided base directory,
+                        or the current working directory if none is provided.
+                    </p></dd><dt><span class="term"><code class="option">--log_file=&lt;LOG_FILE&gt;</code></span></dt><dd><p>Name/path-name of generated log file. Will
+                        be relative to LOG_DIR if its provided, or relative to
+                        BASE_DIR if LOG_DIR isn't provided.
+                    </p></dd><dt><span class="term"><code class="option">--log_dir=&lt;LOG_DIR&gt;</code></span></dt><dd><p>Base directory for the log file.  This
+                            takes precedence over BASE_DIR for the log file.
+                            Provided so that the log file can be outputted in a
+                            special directory (e.g: put it in /var/log).
+                        </p></dd><dt><span class="term"><code class="option">--log_level</code></span></dt><dd><p>The log level. Filters what is written to the log file.</p><table border="0" summary="Simple list" class="simplelist"><tr><td>Critical/Fatal</td></tr><tr><td>Error</td></tr><tr><td>Warning</td></tr><tr><td>Info</td></tr><tr><td>Debug</td></tr></table><p>Lower levels include more information. Choosing a
+                            level outputs the information of that level and all
+                            above it.
+                        </p></dd><dt><span class="term"><code class="option">--template</code></span></dt><dd><p>Specifies the template file relative to BASE_DIR.
+                            Template file acts as a template for the output. The
+                            template is a python string that will have format()
+                            called on it. Valid identifiers include:
+                        </p><table border="0" summary="Simple list" class="simplelist"><tr><td>{upgrade}</td></tr><tr><td>{install}</td></tr><tr><td>{remove}</td></tr><tr><td>{not_upgraded}</td></tr><tr><td>{time}</td></tr><tr><td>{upgradeable}</td></tr></table><p>The first 4 are taken from apt-get.
+                            time is current time (see --time_format).
+                            upgradeable is the sum of upgrade and not_upgraded,
+                            i.e: the number of packages that could be upgraded,
+                            which is what most will want to use.
+                        </p></dd><dt><span class="term"><code class="option">--time_format=&lt;TIME_FORMAT&gt;</code></span></dt><dd><p>Defines the format of the time placeholder
+                        {time} (see --template). Uses python time formatting
+                        syntax (which is similar if not the same as the c
+                        syntax.)
+                        </p></dd><dt><span class="term"><code class="option">--max_width=&lt;MAX_WIDTH&gt;</code></span></dt><dd><p>Max width of the output.</p></dd><dt><span class="term"><code class="option">--no_error_output</code></span></dt><dd><p>If an error occurs, do not write the output file.</p></dd><dt><span class="term"><code class="option">-c / --num_update_checks =&lt;NUM_UPDATE_CHECKS&gt;</code></span></dt><dd><p>Number of time to try updating (apt-get
+                        update). Useful in situations where apt-get update
+                        randomly fails every once in a while.
+                        </p></dd><dt><span class="term"><code class="option">--sleep_period=&lt;SLEEP_PERIOD&gt;</code></span></dt><dd><p>Time (in seconds) to sleep between update
+                            attempts. Useful when update fails are temporally
+                            localized. Values less than or equal to 0 mean no
+                            sleeping.
+                        </p></dd><dt><span class="term"><code class="option">--no_update</code></span></dt><dd><p>Don't update. Useful when your computer is
+                            already updating frequently enough. Also useful for
+                            debugging/testing. Conflicts with
+                            --num_update_checks. If both are used, then the
+                            behavior is undefined.
+                        </p></dd><dt><span class="term"><code class="option">--no_root</code></span></dt><dd><p>Don't do anything requiring root
+                            privileges. Allows normal users to use this
+                            program. Things requiring root privileges (e.g:
+                            updating) can be done in the root crontab.
+                        </p></dd><dt><span class="term"><code class="option">--network_check</code></span></dt><dd><p>Enable the network check, which tries to
+                            determine whether the network is up and available
+                            before trying to update. Rather inaccurate and not
+                            very useful now that we have --num_udpate_checks.
+                        </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                                I'm contemplating depreciating/removing this
+                                option as its not very effective.
+                            </p></div></dd></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> Installation  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">  Building Documentation </td></tr></table></div></body></html>

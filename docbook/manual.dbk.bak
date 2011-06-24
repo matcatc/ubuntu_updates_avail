@@ -220,8 +220,8 @@ ${execi 900 cat ~/.conky/ubuntu_updates_avail.info}
                 <varlistentry>
                     <term><option>--no_root</option></term>
                     <listitem><para>Don't do anything requiring root
-                            privileges. Allows normal users to use this
-                            program. Things requiring root privileges (e.g:
+                            priveleges. Allows normal users to use this
+                            program. Things requiring root priveleges (e.g:
                             updating) can be done in the root crontab.
                         </para>
                     </listitem>
@@ -286,7 +286,7 @@ along with this program.  If not, see <ulink url="http://www.gnu.org/licenses/">
             <title> Misc Notes </title>
 
             <section>
-                <title> Root Privileges </title>
+                <title> Root Priveleges </title>
                 <para>
                     This program requires root privileges in order to call <application>apt-get update</application>. If you
                     don't want to give root access, you could instead update on your own and then
