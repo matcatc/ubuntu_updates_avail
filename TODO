@@ -21,15 +21,10 @@ tagging:
 The items in this file aren't in order, but generally items towards the top are more important.
 -----------------------------------------------------------------------------------------------
 
-- finish docbook documentation
-
-- spellcheck docbook documentation
- 
-- add information to README regarding gh-pages pushing automation
-
-
 ---------------------- everything above this line is in testing ---------------------------------
 
+- add conky texeci to documentation
+    - mention sudo issue
 
 items to consider:
 no particular order
