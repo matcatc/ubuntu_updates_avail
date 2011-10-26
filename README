@@ -36,6 +36,15 @@ Installation
     `${execi 900 cat ~/.conky/ubuntu_updates_avail.info}`
 
 
+Its possible to run the script from conky using texeci, which will run the
+script in another thread (leaving conky 'responsive'.) But you'll still have to
+worry about sudo, so either use the no-root option and update elsewhere, change
+sudo to not ask for permission (at least for apt-get update), or somehow get
+your password to sudo (expect?). The line in conky will look like:
+
+    `${texeci 900 /home/user_name/.conky/ubuntu_updates_avail.py --base_dir /home/user_name/.conky/ --template template --num_update_checks 3 - }`
+
+
 Building Documentation
 ----------------------
 Run build_documentation.sh. It will build all the documentation in the doc subdirectory.
