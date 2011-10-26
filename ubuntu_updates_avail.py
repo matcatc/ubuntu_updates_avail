@@ -258,7 +258,7 @@ def program_options():
     @date Jan 16, 2011
     @author Matthew Todd
     '''
-    usage = "usage: %prog [options] <output_file>"
+    usage = "usage: %prog [options] <output_file/->"
     version_info = textwrap.dedent('''\
         ubuntu_updates_avail Copyright (C) 2011 Matthew A. Todd
         This program is licensed under the GNU GPL v.3. For a full text of the
@@ -364,12 +364,17 @@ def compute_out_file(base_dir, filename):
     '''
     Computes the file out_file path/filename.
 
+    If the outfile is '-', use stdout.
+
     @param base_dir String The directory from which to base the out file.
     @param filename String the name of the out file. Can contain path information as well.
     @date Feb 11, 2011
     @author Matthew Todd
     '''
-    return os.path.abspath(os.path.join(options.base_dir, args[0]))
+    if filename.strip() == '-':
+        return '-'
+    else:
+        return os.path.abspath(os.path.join(options.base_dir, args[0]))
 
 def get_template(template_file, base_dir):
     '''
@@ -546,8 +551,11 @@ def write_msg(filename, msg, is_error):
     @author Matthew Todd
     '''
     if not (options.no_error_output and is_error):
-        with open(filename, 'w') as f:
-            f.write(msg)
+        if filename == '-':
+            print(msg)
+        else:
+            with open(filename, 'w') as f:
+                f.write(msg)
     else:
         log.info('not writing error to output file b/c no_error_output is set')
 
