@@ -26,7 +26,7 @@ subdirectory. In order to get doxygen working better with python, I added the
 following to my Doxyfile (included in the repository):
 
 @code
-INPUT_FILTER = “python /path/to/doxypy.py”
+INPUT_FILTER = "python /path/to/doxypy.py"
 @endcode
 
 Where doxypy.py is from: http://code.foosel.org/doxypy
@@ -73,6 +73,8 @@ report them to me, so please do.
 @date Apr 17, 2011
 @author Matthew Todd
 '''
+
+#TODO: an alternative to calling update and parsing is to call "apt list --upgradeable", but this only gives the total number, and still requires parsing the output
 
 import subprocess
 import sys
